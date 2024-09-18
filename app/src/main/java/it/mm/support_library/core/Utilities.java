@@ -1,30 +1,22 @@
 package it.mm.support_library.core;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Environment;
-import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.pwittchen.prefser.library.Prefser;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
@@ -40,15 +32,15 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import it.sikuel.googlegeocoderapp.GoogleGeocoderApplication;
-import it.sikuel.googlegeocoderapp.model.Task;
+import it.mm.support_library.Application;
 
 /**
- * Created by Marco Mezzasalma on 19/08/24.
+ * Created by Marco Mezzasalma on 18/09/24.
  * Copyright (c) 2024 Dott. Marco Mezzasalma. All rights reserved.
  */
 public class Utilities {
 
+    public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
     public static volatile DispatchQueue importQueue = new DispatchQueue("importQueue");
     private static HashMap<Integer, File> uploadsFiles = new HashMap<Integer, File>();
     private static HashMap<Integer, String> uploadsKeys = new HashMap<Integer, String>();
@@ -490,9 +482,8 @@ public class Utilities {
     }
 
     public static String getSdCardPath() {
-        final Prefser prefser = GoogleGeocoderApplication.Companion.getInstance().getPrefser();
 
-        return prefser.getPreferences().getString("files_path", null);
+        return Application.Companion.getPrefs().getString("files_path", "");
 //        return Environment.getExternalStorageDirectory().getPath() + "/";
 //        return getExternalSdCard().getAbsolutePath() + "/";
     }
@@ -559,234 +550,6 @@ public class Utilities {
             return Double.parseDouble(new DecimalFormat("#.##").format(((double) size / Eb)));
 
         return 0;
-    }
-
-    public static int calculateTotalElementFromFile(String originalPath) {
-        int totalElement = 0;
-        try {
-            File directory = new File(originalPath);
-            if (directory.exists()) {
-                try {
-                    FileInputStream is = new FileInputStream(directory);
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                    String line = reader.readLine();
-                    line = reader.readLine();
-                    int i = 0;
-                    while (line != null) {
-                        totalElement++;
-                        line = reader.readLine();
-                    }
-                } catch (Exception e) {
-                    FileLog.e(BuildVars.TAG, e);
-                    AndroidUtilities.showNotification("Errore", "Calcolo elementi terminato con errore.");
-                    AndroidUtilities.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Calcolo elementi terminato con errore.", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }
-        } catch (Exception e) {
-            FileLog.e(BuildVars.TAG, e);
-            AndroidUtilities.showNotification("Errore", "Calcolo elementi terminato con errore.");
-            AndroidUtilities.runOnUIThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Calcolo elementi terminato con errore.", Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        return totalElement;
-    }
-
-    public static void geoCodeBuildingFromFile(Task task, String originalPath, String destinationPath) {
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                PowerManager powerManager = (PowerManager) GoogleGeocoderApplication.Companion.getInstance().getSystemService(Context.POWER_SERVICE);
-                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ktarip:ImportJobTag");
-                wakeLock.acquire();
-                try {
-                    File directory = new File(originalPath);
-                    if (directory.exists()) {
-                        try {
-                            new File(destinationPath).mkdirs();
-                            FileWriter myWriter = new FileWriter(destinationPath + "/gps_immobili.csv");
-                            FileInputStream is = new FileInputStream(directory);
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                            String line = reader.readLine();
-                            line = reader.readLine();
-                            int i = 0;
-                            myWriter.write("id_portale;ubicazione;latitudine;longitudine;comune;provincia\n");
-                            while (line != null) {
-                                if (i >= task.totalProcessed) {
-                                    String[] elements = line.split(",");
-                                    String id = elements[0];
-                                    String street = "";
-                                    if (elements[1].contains("C.LE")) {
-                                        street = elements[1].replace("C.LE", "CONSORTILE");
-                                    } else if (elements[1].contains("PROV.LE")) {
-                                        street = elements[1].replace("PROV.LE", "PROVINCIALE");
-                                    } else if (elements[1].contains("CIRC.")) {
-                                        street = elements[1].replace("CIRC.", "CIRCONVALLAZIONE");
-                                    } else if (elements[1].contains("VAR.")) {
-                                        street = elements[1].replace("VAR.", "VARIANTE");
-                                    } else {
-                                        street = elements[1];
-                                    }
-                                    String streetNumber = elements.length <= 2 ? "" : elements[2];
-                                    String streetSub = elements.length <= 3 ? "" : elements[3];
-                                    String comune = elements.length <= 4 ? "" : elements[4];
-                                    String provincia = elements.length <= 5 ? "" : elements[5];
-                                    Geocoder geocoder = new Geocoder(GoogleGeocoderApplication.Companion.getAppContext());
-                                    List<Address> addresses;
-                                    try {
-                                        addresses = geocoder.getFromLocationName(street + ", " + streetNumber + " " + streetSub + " " + comune, 1);
-                                        if (addresses.size() > 0) {
-                                            double destinationLatitude = addresses.get(0).getLatitude();
-                                            double destinationLongitude = addresses.get(0).getLongitude();
-                                            myWriter.write(id + ";" + street + "," + streetNumber + " " + streetSub + ";" + destinationLatitude + ";" + destinationLongitude + ";" + comune + ";" + provincia + "\n");
-                                        } else {
-                                            myWriter.write(id + ";" + street + "," + streetNumber + " " + streetSub + ";" + ";" + ";" + comune + ";" + provincia + "\n");
-                                        }
-                                    } catch (IOException e) {
-
-                                    }
-                                }
-                                line = reader.readLine();
-                                i++;
-                                NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateMenuFragment, task, i);
-                            }
-                            myWriter.close();
-                            task.endAt = new Date();
-                            task.save();
-                        } catch (Exception e) {
-                            FileLog.e(BuildVars.TAG, e);
-                            AndroidUtilities.showNotification("Aggiornamento remoto", "Aggiornamento dati terminato con errore.");
-                            task.error = e.toString();
-                            task.endAt = new Date();
-                            task.save();
-                            AndroidUtilities.runOnUIThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Aggiornamento dati terminato con errore.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    }
-                } catch (Exception e) {
-                    FileLog.e(BuildVars.TAG, e);
-                    AndroidUtilities.showNotification("Aggiornamento remoto", "Aggiornamento dati terminato con errore.");
-                    task.error = e.toString();
-                    task.endAt = new Date();
-                    task.save();
-                    AndroidUtilities.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Aggiornamento dati terminato con errore.", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }
-        };
-        thread.start();
-    }
-
-    public static void geoCodeStreetFromFile(Task task, String originalPath, String destinationPath) {
-        final Prefser prefser = GoogleGeocoderApplication.Companion.getInstance().getPrefser();
-
-        Utilities.importQueue.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                PowerManager powerManager = (PowerManager) GoogleGeocoderApplication.Companion.getInstance().getSystemService(Context.POWER_SERVICE);
-                PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ktarip:ImportJobTag");
-                wakeLock.acquire();
-
-                try {
-                    File directory = new File(originalPath);
-                    if (directory.exists()) {
-                        try {
-                            FileWriter myWriter = new FileWriter(destinationPath + "/geocoder_streets.csv");
-                            FileInputStream is = new FileInputStream(directory);
-                            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                            String line = reader.readLine();
-                            line = reader.readLine();
-                            int i = 0;
-                            while (line != null) {
-                                if (i >= 0) {
-                                    String[] elements = line.split(";");
-                                    String id = elements[0];
-                                    String street = "";
-                                    if (elements[1].contains("C.LE")) {
-                                        street = elements[1].replace("C.LE", "CONSORTILE");
-                                    } else if (elements[1].contains("PROV.LE")) {
-                                        street = elements[1].replace("PROV.LE", "PROVINCIALE");
-                                    } else if (elements[1].contains("CIRC.")) {
-                                        street = elements[1].replace("CIRC.", "CIRCONVALLAZIONE");
-                                    } else if (elements[1].contains("VAR.")) {
-                                        street = elements[1].replace("VAR.", "VARIANTE");
-                                    } else {
-                                        street = elements[1];
-                                    }
-                                    String comune = elements.length <= 2 ? "" : elements[2];
-                                    String billing_code = elements.length <= 3 ? "" : elements[3];
-                                    Geocoder geocoder = new Geocoder(GoogleGeocoderApplication.Companion.getAppContext());
-                                    List<Address> addresses;
-                                    try {
-                                        addresses = geocoder.getFromLocationName(street + " " + comune, 1);
-                                        if (addresses.size() > 0) {
-                                            double destinationLatitude = addresses.get(0).getLatitude();
-                                            double destinationLongitude = addresses.get(0).getLongitude();
-
-                                            myWriter.write(id + ";" + billing_code + ";" + street + ";" + comune + ";" + destinationLatitude + ";" + destinationLongitude + ";" + addresses.get(0).getAddressLine(0) + ";" + addresses.get(0).getThoroughfare() + "\n");
-                                        } else {
-                                            myWriter.write(id + ";" + billing_code + ";" + street + ";" + comune + ";" + ";" + "\n");
-                                        }
-                                    } catch (IOException e) {
-
-                                    }
-                                }
-                                line = reader.readLine();
-                                i++;
-                                NotificationCenter.getInstance().postNotificationName(NotificationCenter.totalEvents++, i);
-//                                if (i == 25000) {
-//                                    myWriter.close();
-//                                    break;
-//                                }
-                            }
-                            myWriter.close();
-                            task.endAt = new Date();
-                            task.save();
-                        } catch (Exception e) {
-                            FileLog.e(BuildVars.TAG, e);
-                            task.error = e.toString();
-                            task.endAt = new Date();
-                            task.save();
-                            AndroidUtilities.showNotification("Aggiornamento remoto", "Aggiornamento dati terminato con errore.");
-                            AndroidUtilities.runOnUIThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Aggiornamento dati terminato con errore.", Toast.LENGTH_LONG).show();
-                                }
-                            });
-                        }
-                    }
-                } catch (Exception e) {
-                    FileLog.e(BuildVars.TAG, e);
-                    task.error = e.toString();
-                    task.endAt = new Date();
-                    task.save();
-                    AndroidUtilities.showNotification("Aggiornamento remoto", "Aggiornamento dati terminato con errore.");
-                    AndroidUtilities.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), "Aggiornamento dati terminato con errore.", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            }
-        });
     }
 
     public static void moveFile(String inputPath, String inputFile, String outputPath) {

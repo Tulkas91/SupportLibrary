@@ -69,10 +69,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-import it.sikuel.googlegeocoderapp.GoogleGeocoderApplication;
-import it.sikuel.googlegeocoderapp.R;
-import it.sikuel.googlegeocoderapp.ui.activity.MainActivity;
-import it.sikuel.googlegeocoderapp.ui.component.TypefaceSpan;
+import it.mm.support_library.Application;
 
 public class AndroidUtilities {
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<String, Typeface>();
@@ -83,7 +80,7 @@ public class AndroidUtilities {
     private static int screenHeight = 0;
 
     static {
-        density = GoogleGeocoderApplication.Companion.getAppContext().getResources().getDisplayMetrics().density;
+        density = Application.Companion.getAppContext().getResources().getDisplayMetrics().density;
     }
 
     public static void runOnUIThread(Runnable runnable) {
@@ -92,14 +89,14 @@ public class AndroidUtilities {
 
     public static void runOnUIThread(Runnable runnable, long delay) {
         if (delay == 0) {
-            GoogleGeocoderApplication.Companion.getApplicationHandler().post(runnable);
+            Application.Companion.getApplicationHandler().post(runnable);
         } else {
-            GoogleGeocoderApplication.Companion.getApplicationHandler().postDelayed(runnable, delay);
+            Application.Companion.getApplicationHandler().postDelayed(runnable, delay);
         }
     }
 
     public static void cancelRunOnUIThread(Runnable runnable) {
-        GoogleGeocoderApplication.Companion.getApplicationHandler().removeCallbacks(runnable);
+        Application.Companion.getApplicationHandler().removeCallbacks(runnable);
     }
 
     public static void clearCursorDrawable(EditText editText) {
@@ -171,7 +168,7 @@ public class AndroidUtilities {
     }
 
     public static int toPx(int dp) {
-        Resources resources = GoogleGeocoderApplication.Companion.getAppContext().getResources();
+        Resources resources = Application.Companion.getAppContext().getResources();
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
     }
 
@@ -183,7 +180,7 @@ public class AndroidUtilities {
         synchronized (typefaceCache) {
             if (!typefaceCache.containsKey(assetPath)) {
                 try {
-                    Typeface t = Typeface.createFromAsset(GoogleGeocoderApplication.Companion.getAppContext().getAssets(), assetPath);
+                    Typeface t = Typeface.createFromAsset(Application.Companion.getAppContext().getAssets(), assetPath);
                     typefaceCache.put(assetPath, t);
                 } catch (Exception e) {
                     FileLog.e("Typefaces", "Could not get typeface '" + assetPath + "' because " + e.getMessage());
@@ -268,7 +265,7 @@ public class AndroidUtilities {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(GoogleGeocoderApplication.Companion.getAppContext(), errorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(Application.Companion.getAppContext(), errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -434,7 +431,7 @@ public class AndroidUtilities {
 
     public static String getAppVersion() {
         try {
-            PackageInfo pInfo = GoogleGeocoderApplication.Companion.getAppContext().getPackageManager().getPackageInfo(GoogleGeocoderApplication.Companion.getAppContext().getPackageName(), 0);
+            PackageInfo pInfo = Application.Companion.getAppContext().getPackageManager().getPackageInfo(Application.Companion.getAppContext().getPackageName(), 0);
             return String.format(Locale.US, "K-Tarip for Android v%s (%d)", pInfo.versionName, pInfo.versionCode);
         } catch (PackageManager.NameNotFoundException ex) {
             FileLog.e(BuildVars.TAG, ex);
@@ -454,35 +451,6 @@ public class AndroidUtilities {
             } catch (IOException e) {
             }
         }
-    }
-
-    public static void showNotification(String title, String message) {
-        Intent intent = new Intent(GoogleGeocoderApplication.Companion.getAppContext(), MainActivity.class);
-        PendingIntent pi = PendingIntent.getActivity(GoogleGeocoderApplication.Companion.getAppContext(), 0, intent, FLAG_IMMUTABLE);
-
-        Notification notification = new NotificationCompat.Builder(GoogleGeocoderApplication.Companion.getAppContext())
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setContentIntent(pi)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setShowWhen(true)
-                .setColor(Color.RED)
-                .setLocalOnly(true)
-                .build();
-
-        if (ActivityCompat.checkSelfPermission(GoogleGeocoderApplication.Companion.getAppContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        NotificationManagerCompat.from(GoogleGeocoderApplication.Companion.getAppContext())
-                .notify(new Random().nextInt(), notification);
     }
 
     public static Bitmap combineImageIntoOne(ArrayList<Bitmap> bitmap) {

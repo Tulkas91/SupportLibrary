@@ -14,6 +14,8 @@ progressview = "1.0.7"
 reactiveandroid = "1.4.3"
 databindingRuntime = "8.6.1"
 androidvolley = "1.2.1"
+altbeacon = "2.20.6"
+biometric = "1.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -29,6 +31,8 @@ prefser = { module = "com.github.pwittchen:prefser", version.ref = "prefser" }
 progressview = { module = "com.github.skydoves:progressview", version.ref = "progressview" }
 reactiveandroid = { module = "com.reactiveandroid:reactiveandroid", version.ref = "reactiveandroid" }
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
+org-altbeacon = { group = "org.altbeacon", name = "android-beacon-library", version.ref = "altbeacon" }
+androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

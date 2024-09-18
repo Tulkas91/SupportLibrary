@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
@@ -29,21 +30,26 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    useLibrary("org.apache.http.legacy")
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 dependencies {
 
-    implementation(libs.android.volley)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.org.altbeacon)
     implementation(libs.androidx.activity)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.biometric)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.databinding.runtime)
+    implementation(libs.android.volley)
+    implementation(libs.material)
     implementation(libs.prefser)
     implementation(libs.reactiveandroid)
     implementation(libs.progressview)
-    implementation(libs.androidx.databinding.runtime)
-//    implementation(libs.apache.httpcomponents)
     implementation("org.apache.httpcomponents:httpmime:4.5.6") {
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }

@@ -1,4 +1,4 @@
-package it.sikuel.k_office.helper
+package it.mm.support_library.helper
 
 import android.app.Activity
 import android.app.KeyguardManager
@@ -10,7 +10,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import it.sikuel.k_office.core.NotificationCenter
+import it.mm.support_library.core.NotificationCenter
 import java.util.concurrent.Executor
 
 class BiometricAuthenticationHelper(val context: Context) {

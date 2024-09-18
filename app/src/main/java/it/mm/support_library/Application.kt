@@ -8,27 +8,18 @@ import android.content.SharedPreferences
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
-import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import com.github.pwittchen.prefser.library.Prefser
-import org.altbeacon.beacon.BeaconManager
-import org.altbeacon.beacon.Identifier
-import org.altbeacon.beacon.Region
-import java.util.Observable
+import it.mm.support_library.core.BuildVars
+import it.mm.support_library.core.FileLog
+import it.mm.support_library.volley.RequestManager
 import kotlin.concurrent.Volatile
 
 /**
  * Created by Dott. Marco Mezzasalma on 18/09/2024.
  */
-class Application : Application(), java.util.Observer, ActivityLifecycleCallbacks {
-    private var prefser: Prefser? = null
+class Application : Application(), ActivityLifecycleCallbacks {
     private var prefs: SharedPreferences? = null
     private var inForeground = false
-    private var host = ""
-    private var beaconManager: BeaconManager? = null
-
-    private var account: Account? = null
 
     private var androidDefaultUEH: Thread.UncaughtExceptionHandler? = null
     private val handler =
@@ -36,10 +27,6 @@ class Application : Application(), java.util.Observer, ActivityLifecycleCallback
             FileLog.e(BuildVars.TAG, ex)
             androidDefaultUEH!!.uncaughtException(thread, ex)
         }
-
-    var beaconDevices: List<BeaconDevice>? = null
-    var region =
-        Region("all-beacons", Identifier.parse("acfd065e-c3c0-11e3-9bbe-1a514932ac01"), null, null)
 
     override fun onCreate() {
         super.onCreate()
@@ -59,78 +46,14 @@ class Application : Application(), java.util.Observer, ActivityLifecycleCallback
         RequestManager.initializeWith(applicationContext)
         RequestManager.queue().useBackgroundQueue().start()
 
-        prefser = Prefser(getAppContext()!!, GsonConverter())
-        prefs = PreferenceManager.getDefaultSharedPreferences(this)
-
-        account = Account()
-
-        //BuildVars.LOCAL_SERVER_RUN = prefser.getPreferences().getBoolean(PrefUtils.PREF_LOCAL_SERVER_RUN, false);
-        val manager = prefser!!.get("Manager", Manager::class.java, Manager())
-        account!!.setCurrentManager(manager)
-
-//        account!!.addObserver(this)
-        account!!.currentManager.observeForever(accountObserver)
-
-        mMediaPlayer = MediaPlayer() //   Initialize sound
-        mMediaPlayer = MediaPlayer.create(mAppContext, R.raw.chimes)
-        mMediaPlayer!!.setLooping(false)
-    }
-
-    private val accountObserver = Observer<Manager> { manager ->
-        //save object
-        Utilities.globalQueue.postRunnable {
-            prefser!!.put(
-                "Manager",
-                manager
-            )
-        }
+        prefs = getSharedPreferences("it.mm.support_library_preferences", Context.MODE_PRIVATE)
+        val filesPath = prefs!!.getString("files_path", "")
+        if (filesPath.isNullOrEmpty()) prefs!!.edit().putString("files_path", "/storage/emulated/0/Documents/").commit()
 
     }
 
     fun setAppContext(mAppContext: Context?) {
         Companion.mAppContext = mAppContext
-    }
-
-    fun getPrefser(): Prefser? {
-        return prefser
-    }
-
-    fun getPrefs(): SharedPreferences? {
-        return prefs
-    }
-
-    fun getAccount(): Account? {
-        return account
-    }
-
-    fun logout() {
-        prefser!!.put("not_authorized", true)
-        if (account!!.currentManager != null) account!!.logout()
-    }
-
-    fun setServerHost(host: String) {
-        this.host = "https://$host"
-    }
-
-    fun getServerHost(): String {
-        if (BuildVars.LOCAL_SERVER_RUN) {
-            return BuildVars.LOCAL_SERVER_URL
-        }
-        return host
-    }
-
-    override fun update(observable: Observable, data: Any) {
-        val manager = (observable as Account).currentManager
-
-        if (manager != null) {
-            //save object
-            Utilities.globalQueue.postRunnable {
-                prefser!!.put(
-                    "Manager",
-                    manager
-                )
-            }
-        }
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
@@ -147,7 +70,6 @@ class Application : Application(), java.util.Observer, ActivityLifecycleCallback
     }
 
     override fun onActivityStopped(activity: Activity) {
-        NotificationCenter.getInstance().postNotificationName(NotificationCenter.moveTaskToFront)
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -174,20 +96,14 @@ class Application : Application(), java.util.Observer, ActivityLifecycleCallback
         var applicationHandler: Handler? = null
             private set
 
+        var prefs: SharedPreferences? = null
+
         var loadingDistricts: Boolean = false
         var mMediaPlayer: MediaPlayer? = null
-
-        fun getInstance(): Application? {
-            return mInstance
-        }
 
         fun getAppContext(): Context? {
             return mAppContext
         }
 
-        fun getServerUrl(): String {
-            if (BuildVars.LOCAL_SERVER_RUN) return BuildVars.LOCAL_SERVER_URL
-            return BuildVars.SERVER_URL
-        }
     }
 }

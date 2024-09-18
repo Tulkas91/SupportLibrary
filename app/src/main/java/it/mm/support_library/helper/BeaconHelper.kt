@@ -1,4 +1,4 @@
-package it.sikuel.k_office.helper
+package it.mm.support_library.helper
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,13 +9,10 @@ import android.content.Intent
 import android.util.Log
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.Observer
-import it.sikuel.k_office.KOfficeApplication
-import it.sikuel.k_office.KOfficeApplication.Companion.getInstance
-import it.sikuel.k_office.R
-import it.sikuel.k_office.core.NotificationCenter
-import it.sikuel.k_office.core.customNofitication.Notify
-import it.sikuel.k_office.core.time.FastDateFormat
-import it.sikuel.k_office.ui.activity.MainActivity
+import it.mm.support_library.Application
+import it.mm.support_library.R
+import it.mm.support_library.core.NotificationCenter
+import it.mm.support_library.core.time.FastDateFormat
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
 import org.altbeacon.beacon.BeaconParser
@@ -108,7 +105,7 @@ class BeaconHelper(val context: Context) {
             // if location permission has not been granted when we start
             // a foreground service.  In this case, wait to set this up
             // until after that permission is granted
-            Log.d(KOfficeApplication.TAG, "Not setting up foreground service scanning until location permission granted by user")
+            Log.d(Application.TAG, "Not setting up foreground service scanning until location permission granted by user")
             return
         }
         //beaconManager.setEnableScheduledScanJobs(false);

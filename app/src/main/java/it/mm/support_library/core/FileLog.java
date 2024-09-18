@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import it.sikuel.googlegeocoderapp.core.time.FastDateFormat;
+import it.mm.support_library.core.time.FastDateFormat;
 
 public class FileLog {
     private OutputStreamWriter streamWriter = null;

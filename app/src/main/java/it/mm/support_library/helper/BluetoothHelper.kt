@@ -1,4 +1,4 @@
-package it.sikuel.k_office.helper
+package it.mm.support_library.helper
 
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
@@ -10,7 +10,7 @@ import android.content.IntentFilter
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import it.sikuel.k_office.R
+import it.mm.support_library.R
 
 class BluetoothHelper(val context: Context, val activity: Activity) {
 
