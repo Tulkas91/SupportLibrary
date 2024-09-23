@@ -52,7 +52,7 @@ class Application : Application(), ActivityLifecycleCallbacks {
 
     }
 
-    fun setAppContext(mAppContext: Context?) {
+    private fun setAppContext(mAppContext: Context?) {
         Companion.mAppContext = mAppContext
     }
 
@@ -85,7 +85,7 @@ class Application : Application(), ActivityLifecycleCallbacks {
     }
 
     companion object {
-        val TAG = "K-Help"
+        const val TAG = "Support Library"
         var mInstance: Application? = null
             private set
 

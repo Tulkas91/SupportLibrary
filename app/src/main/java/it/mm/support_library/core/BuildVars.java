@@ -29,7 +29,7 @@ public class BuildVars {
     /**
      * Tag name for logging.
      */
-    public static final String TAG = "k-help_pro";
+    public static final String TAG = "support-library";
 
     /**
      * Timeout request.

@@ -24,8 +24,7 @@ import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import it.sikuel.k_office.R
-import it.sikuel.k_office.core.BuildVars.TAG
+import it.mm.support_library.core.BuildVars.TAG
 
 class GPSHelper(val context: Context, val activity: Activity) {
 

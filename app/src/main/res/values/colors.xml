@@ -6,6 +6,11 @@
     <!-- The color of the divider and error text when enabled. -->
     <color name="widget_labelled_spinner_error">#FFDD2C00</color>
 
+    <color name="colorPrimary">#e2ba13</color>
+    <color name="colorPrimaryDark">#e2ba13</color>
+    <color name="colorPrimaryOld">#e2ba13</color>
+    <color name="colorPrimaryDarkOld">#e2ba13</color>
+    <color name="colorPrimaryStrong">#FF9800</color>
     <color name="selected_color_transparent">#88909090</color>
     <color name="colorDefaultGreen">#2a9b42</color>
     <color name="colorAccent">#ff6f00</color>

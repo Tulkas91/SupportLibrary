@@ -270,52 +270,52 @@ public class AndroidUtilities {
         });
     }
 
-    public static Spannable replaceTags(String str) {
-        try {
-            int start = -1;
-            int startColor = -1;
-            int end = -1;
-            StringBuilder stringBuilder = new StringBuilder(str);
-            while ((start = stringBuilder.indexOf("<br>")) != -1) {
-                stringBuilder.replace(start, start + 4, "\n");
-            }
-            while ((start = stringBuilder.indexOf("<br/>")) != -1) {
-                stringBuilder.replace(start, start + 5, "\n");
-            }
-            ArrayList<Integer> bolds = new ArrayList<Integer>();
-            ArrayList<Integer> colors = new ArrayList<Integer>();
-            while ((start = stringBuilder.indexOf("<b>")) != -1 || (startColor = stringBuilder.indexOf("<c")) != -1) {
-                if (start != -1) {
-                    stringBuilder.replace(start, start + 3, "");
-                    end = stringBuilder.indexOf("</b>");
-                    stringBuilder.replace(end, end + 4, "");
-                    bolds.add(start);
-                    bolds.add(end);
-                } else if (startColor != -1) {
-                    stringBuilder.replace(startColor, startColor + 2, "");
-                    end = stringBuilder.indexOf(">", startColor);
-                    int color = Color.parseColor(stringBuilder.substring(startColor, end));
-                    stringBuilder.replace(startColor, end + 1, "");
-                    end = stringBuilder.indexOf("</c>");
-                    stringBuilder.replace(end, end + 4, "");
-                    colors.add(startColor);
-                    colors.add(end);
-                    colors.add(color);
-                }
-            }
-            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(stringBuilder);
-            for (int a = 0; a < bolds.size() / 2; a++) {
-                spannableStringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), bolds.get(a * 2), bolds.get(a * 2 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            for (int a = 0; a < colors.size() / 3; a++) {
-                spannableStringBuilder.setSpan(new ForegroundColorSpan(colors.get(a * 3 + 2)), colors.get(a * 3), colors.get(a * 3 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            }
-            return spannableStringBuilder;
-        } catch (Exception e) {
-            FileLog.e("tmessages", e);
-        }
-        return new SpannableStringBuilder(str);
-    }
+//    public static Spannable replaceTags(String str) {
+//        try {
+//            int start = -1;
+//            int startColor = -1;
+//            int end = -1;
+//            StringBuilder stringBuilder = new StringBuilder(str);
+//            while ((start = stringBuilder.indexOf("<br>")) != -1) {
+//                stringBuilder.replace(start, start + 4, "\n");
+//            }
+//            while ((start = stringBuilder.indexOf("<br/>")) != -1) {
+//                stringBuilder.replace(start, start + 5, "\n");
+//            }
+//            ArrayList<Integer> bolds = new ArrayList<Integer>();
+//            ArrayList<Integer> colors = new ArrayList<Integer>();
+//            while ((start = stringBuilder.indexOf("<b>")) != -1 || (startColor = stringBuilder.indexOf("<c")) != -1) {
+//                if (start != -1) {
+//                    stringBuilder.replace(start, start + 3, "");
+//                    end = stringBuilder.indexOf("</b>");
+//                    stringBuilder.replace(end, end + 4, "");
+//                    bolds.add(start);
+//                    bolds.add(end);
+//                } else if (startColor != -1) {
+//                    stringBuilder.replace(startColor, startColor + 2, "");
+//                    end = stringBuilder.indexOf(">", startColor);
+//                    int color = Color.parseColor(stringBuilder.substring(startColor, end));
+//                    stringBuilder.replace(startColor, end + 1, "");
+//                    end = stringBuilder.indexOf("</c>");
+//                    stringBuilder.replace(end, end + 4, "");
+//                    colors.add(startColor);
+//                    colors.add(end);
+//                    colors.add(color);
+//                }
+//            }
+//            SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(stringBuilder);
+//            for (int a = 0; a < bolds.size() / 2; a++) {
+//                spannableStringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.getTypeface("fonts/rmedium.ttf")), bolds.get(a * 2), bolds.get(a * 2 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//            for (int a = 0; a < colors.size() / 3; a++) {
+//                spannableStringBuilder.setSpan(new ForegroundColorSpan(colors.get(a * 3 + 2)), colors.get(a * 3), colors.get(a * 3 + 1), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//            }
+//            return spannableStringBuilder;
+//        } catch (Exception e) {
+//            FileLog.e("tmessages", e);
+//        }
+//        return new SpannableStringBuilder(str);
+//    }
 
     public static void fitText(EditText textView, String text, float minTextSizePx, float maxWidthPx) {
         textView.setEllipsize(null);

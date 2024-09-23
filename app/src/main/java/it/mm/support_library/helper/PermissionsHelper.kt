@@ -1,23 +1,36 @@
 package it.mm.support_library.helper
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import it.sikuel.k_office.core.BuildVars.TAG
-import it.sikuel.k_office.ui.activity.MainActivity
+import it.mm.support_library.core.BuildVars.TAG
 
-class PermissionsHelper(val context: Context, val activity: MainActivity) {
+class PermissionsHelper(val context: Context, activityCaller: ActivityResultCaller) {
     // Manifest.permission.ACCESS_BACKGROUND_LOCATION
     // Manifest.permission.ACCESS_FINE_LOCATION
     // Manifest.permission.BLUETOOTH_CONNECT
     // Manifest.permission.BLUETOOTH_SCAN
     val permissions = ArrayList<String>()
+
+    private lateinit var requestPermissionsLauncher: ActivityResultLauncher<Array<String>>
+
+    // Inizializza la richiesta di permessi con una lambda per gestire il risultato
+    init {
+        requestPermissionsLauncher = activityCaller.registerForActivityResult(
+            ActivityResultContracts.RequestMultiplePermissions()
+        ) { permissions ->
+            handlePermissionsResult(permissions)
+        }
+    }
 
     private fun isPermissionGranted(permissionString: String): Boolean {
         return (ContextCompat.checkSelfPermission(
@@ -108,33 +121,50 @@ class PermissionsHelper(val context: Context, val activity: MainActivity) {
         }
     }
 
-    val requestPermissionsLauncher = activity.registerForActivityResult(
-            ActivityResultContracts.RequestMultiplePermissions()
-        ) { permissions ->
-            // Handle Permission granted/rejected
-            permissions.entries.forEach {
-                val permissionName = it.key
-                val isGranted = it.value
-                if (isGranted) {
-                    Log.d(TAG, "$permissionName permission granted: $isGranted")
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
-                } else {
-                    Log.d(TAG, "$permissionName permission granted: $isGranted")
-                    requestPermission(it.key)
-                    // Explain to the user that the feature is unavailable because the
-                    // features requires a permission that the user has denied. At the
-                    // same time, respect the user's decision. Don't link to system
-                    // settings in an effort to convince the user to change their
-                    // decision.
-                }
+//    val requestPermissionsLauncher = activityCaller.registerForActivityResult(
+//            ActivityResultContracts.RequestMultiplePermissions()
+//        ) { permissions ->
+//            // Handle Permission granted/rejected
+//            permissions.entries.forEach {
+//                val permissionName = it.key
+//                val isGranted = it.value
+//                if (isGranted) {
+//                    Log.d(TAG, "$permissionName permission granted: $isGranted")
+//                    // Permission is granted. Continue the action or workflow in your
+//                    // app.
+//                } else {
+//                    Log.d(TAG, "$permissionName permission granted: $isGranted")
+//                    requestPermission(it.key)
+//                    // Explain to the user that the feature is unavailable because the
+//                    // features requires a permission that the user has denied. At the
+//                    // same time, respect the user's decision. Don't link to system
+//                    // settings in an effort to convince the user to change their
+//                    // decision.
+//                }
+//            }
+//        }
+
+    fun requestPermissions(permissions: Array<String>) {
+        requestPermissionsLauncher.launch(permissions)
+    }
+
+    private fun handlePermissionsResult(permissions: Map<String, Boolean>) {
+        permissions.forEach { (permission, isGranted) ->
+            if (isGranted) {
+                Log.d("PermissionHandler", "$permission granted")
+                // Esegui l'azione desiderata se il permesso è stato concesso
+            } else {
+                Log.d("PermissionHandler", "$permission denied")
+                // Gestisci il caso in cui il permesso è stato negato
             }
         }
-    private fun requestPermission(permission: String) {
-        ActivityCompat.requestPermissions(
-            activity,
-            arrayOf(permission),
-            1
-        )
     }
+
+//    private fun requestPermission(permission: String) {
+//        ActivityCompat.requestPermissions(
+//            activityCaller,
+//            arrayOf(permission),
+//            1
+//        )
+//    }
 }

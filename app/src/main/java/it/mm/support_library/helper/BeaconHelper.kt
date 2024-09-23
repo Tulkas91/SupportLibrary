@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import it.mm.support_library.Application
 import it.mm.support_library.R
 import it.mm.support_library.core.NotificationCenter
+import it.mm.support_library.core.customNofitication.Notify
 import it.mm.support_library.core.time.FastDateFormat
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
@@ -25,7 +26,7 @@ import java.util.Locale
 class BeaconHelper(val context: Context) {
 
     private var beaconManager: BeaconManager? = null
-    var region = Region("all-beacons", null, null, null)
+    private var region = Region("all-beacons", null, null, null)
 
     fun beaconStart() {
         val beaconManager = BeaconManager.getInstanceForApplication(context)
@@ -81,9 +82,9 @@ class BeaconHelper(val context: Context) {
 
     private fun setUpBeaconRegion() {
         val identifiers: MutableList<Identifier> = ArrayList()
-        for (i in getInstance()!!.beaconDevices!!.indices) {
-            identifiers.add(Identifier.parse(getInstance()!!.beaconDevices!![i].code))
-        }
+//        for (i in Application.mInstance!!.beaconDevices!!.indices) {
+//            identifiers.add(Identifier.parse(Application.mInstance!!.beaconDevices!![i].code))
+//        }
         region = Region("all-beacons", identifiers)
     }
 
@@ -133,11 +134,11 @@ class BeaconHelper(val context: Context) {
         builder.setSmallIcon(R.mipmap.ic_launcher_round)
         builder.setContentTitle("K-Help Application")
         builder.setContentText("Scanning for Beacons")
-        val intent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
-        )
-        builder.setContentIntent(pendingIntent);
+//        val intent = Intent(context, MainActivity::class.java)
+//        val pendingIntent = PendingIntent.getActivity(
+//            context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
+//        )
+//        builder.setContentIntent(pendingIntent);
         val channel =  NotificationChannel("k-help-beacon-ref-notification-id",
             "My Notification Name", NotificationManager.IMPORTANCE_DEFAULT)
         channel.setDescription("My Notification Channel Description")
@@ -186,23 +187,23 @@ class BeaconHelper(val context: Context) {
 //    }
 
     private fun sendNotification(text: String, channelId: String) {
-        val stackBuilder = TaskStackBuilder.create(context)
-//        stackBuilder.addNextIntent(Intent(this, HomeActivity::class.java))
-        stackBuilder.addNextIntent(Intent(context, MainActivity::class.java))
-        val resultPendingIntent = stackBuilder.getPendingIntent(
-            0,
-            PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
-        )
+//        val stackBuilder = TaskStackBuilder.create(context)
+////        stackBuilder.addNextIntent(Intent(this, HomeActivity::class.java))
+//        stackBuilder.addNextIntent(Intent(context, MainActivity::class.java))
+//        val resultPendingIntent = stackBuilder.getPendingIntent(
+//            0,
+//            PendingIntent.FLAG_UPDATE_CURRENT + PendingIntent.FLAG_IMMUTABLE
+//        )
         Notify.build(context)
             .setAutoCancel(true)
-            .setTitle("K-Help Application")
+            .setTitle("Notify Application")
             .setContent(text)
             .setChannelId(channelId)
             .setChannelName("K-Help Notification Channel")
             .setSmallIcon(R.drawable.notifications)
             .setLargeIcon(R.mipmap.ic_launcher_round)
             .setColor(R.color.colorPrimary)
-            .setPendingIntent(resultPendingIntent)
+//            .setPendingIntent(resultPendingIntent)
             .show()
         //                .setLargeIcon("https://images.pexels.com/photos/139829/pexels-photo-139829.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=150&w=440")
         //                .largeCircularIcon()

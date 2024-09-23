@@ -26,6 +26,19 @@ android {
             )
         }
     }
+
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/NOTICE",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE.txt"
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -48,8 +61,9 @@ dependencies {
     implementation(libs.android.volley)
     implementation(libs.material)
     implementation(libs.prefser)
-    implementation(libs.reactiveandroid)
+//    implementation(libs.reactiveandroid)
     implementation(libs.progressview)
+    implementation(libs.play.services.location)
     implementation("org.apache.httpcomponents:httpmime:4.5.6") {
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }

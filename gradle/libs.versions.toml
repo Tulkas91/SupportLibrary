@@ -1,6 +1,6 @@
 [versions]
-agp = "8.5.2"
-kotlin = "1.9.0"
+agp = "8.6.1"
+kotlin = "1.9.22"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -9,9 +9,10 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
+playServicesLocation = "21.3.0"
 prefser = "2.0.6"
 progressview = "1.0.7"
-reactiveandroid = "1.4.3"
+#reactiveandroid = "1.4.3"
 databindingRuntime = "8.6.1"
 androidvolley = "1.2.1"
 altbeacon = "2.20.6"
@@ -27,9 +28,10 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 prefser = { module = "com.github.pwittchen:prefser", version.ref = "prefser" }
 progressview = { module = "com.github.skydoves:progressview", version.ref = "progressview" }
-reactiveandroid = { module = "com.reactiveandroid:reactiveandroid", version.ref = "reactiveandroid" }
+#reactiveandroid = { module = "com.reactiveandroid:reactiveandroid", version.ref = "reactiveandroid" }
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 org-altbeacon = { group = "org.altbeacon", name = "android-beacon-library", version.ref = "altbeacon" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
