@@ -83,27 +83,29 @@ dependencies {
     testImplementation(libs.robolectric)
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("release") {
-//            from(components["release"]) // Usa il componente 'android' per le librerie Android
-//
-//            groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
-//            artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-//            version = "1.0.3" // Versione della libreria
-//        }
-//    }
-//
-//    repositories {
-//        mavenLocal() // Pubblica localmente, necessario per JitPack
-//        // Se in futuro vuoi pubblicare su MavenCentral, puoi aggiungere qui la configurazione per Maven Central
-//        // maven {
-//        //     name = "MavenCentral"
-//        //     url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-//        //     credentials {
-//        //         username = project.findProperty("mavenUsername") as String? ?: ""
-//        //         password = project.findProperty("mavenPassword") as String? ?: ""
-//        //     }
-//        // }
-//    }
-//}
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            afterEvaluate {
+                from(components["release"]) // Usa il componente 'release' per le librerie Android
+            }
+
+            groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
+            artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
+            version = "1.0.4" // Versione della libreria
+        }
+    }
+
+    repositories {
+        mavenLocal() // Pubblica localmente, necessario per JitPack
+        // Se in futuro vuoi pubblicare su MavenCentral, puoi aggiungere qui la configurazione per Maven Central
+        // maven {
+        //     name = "MavenCentral"
+        //     url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+        //     credentials {
+        //         username = project.findProperty("mavenUsername") as String? ?: ""
+        //         password = project.findProperty("mavenPassword") as String? ?: ""
+        //     }
+        // }
+    }
+}
