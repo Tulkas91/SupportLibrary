@@ -63,6 +63,10 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.support.annotations)
 
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.urlconnection) // Supporto per HttpURLConnection
+    implementation(libs.logging.interceptor)
+
     // Esclusione delle dipendenze inutili per httpmime e httpcore
     implementation("org.apache.httpcomponents:httpmime:4.5.6") {
         exclude(group = "org.apache.httpcomponents", module = "httpclient")

@@ -11,6 +11,7 @@ material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
 mockitoCore = "1.10.19"
+okhttpUrlconnection = "4.11.0"
 playServicesLocation = "21.3.0"
 prefser = "2.0.6"
 progressview = "1.0.7"
@@ -30,10 +31,13 @@ android-volley = { group = "com.android.volley", name = "volley", version.ref = 
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttpUrlconnection" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttpUrlconnection" }
+okhttp-urlconnection = { module = "com.squareup.okhttp3:okhttp-urlconnection", version.ref = "okhttpUrlconnection" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 prefser = { module = "com.github.pwittchen:prefser", version.ref = "prefser" }
 progressview = { module = "com.github.skydoves:progressview", version.ref = "progressview" }

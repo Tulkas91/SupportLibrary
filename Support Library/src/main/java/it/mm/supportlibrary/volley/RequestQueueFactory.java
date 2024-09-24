@@ -1,10 +1,6 @@
 package it.mm.supportlibrary.volley;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.http.AndroidHttpClient;
-import android.os.Build;
 
 import com.android.volley.ExecutorDelivery;
 import com.android.volley.Network;
@@ -12,20 +8,21 @@ import com.android.volley.RequestQueue;
 import com.android.volley.ResponseDelivery;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.HttpClientStack;
-import com.android.volley.toolbox.HttpStack;
-import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.NoCache;
 import com.android.volley.toolbox.Volley;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.concurrent.Executors;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class RequestQueueFactory {
 
+    /**
+     * Restituisce la coda di richieste in base al nome specificato.
+     */
     public static RequestQueue getQueue(Context context, String name) {
         RequestQueue result = null;
 
@@ -39,47 +36,50 @@ public class RequestQueueFactory {
         return result;
     }
 
+    /**
+     * Restituisce la coda di richieste predefinita usando OkHttp.
+     */
     public static RequestQueue getDefault(Context context) {
-        return Volley.newRequestQueue(context.getApplicationContext());
+        return Volley.newRequestQueue(context.getApplicationContext(), createOkHttpStack());
     }
 
+    /**
+     * Restituisce una coda di richieste per le immagini usando OkHttp.
+     */
     public static RequestQueue getImageDefault(Context context) {
-        return newImageQueue(context.getApplicationContext(), null,
-                RequestOptions.DEFAULT_POOL_SIZE);
+        return newImageQueue(context.getApplicationContext(), RequestOptions.DEFAULT_POOL_SIZE);
     }
 
+    /**
+     * Restituisce una coda di richieste di background.
+     */
     public static RequestQueue newBackgroundQueue(Context context) {
-        return newBackgroundQueue(context, null, RequestOptions.DEFAULT_POOL_SIZE);
+        return newBackgroundQueue(context, RequestOptions.DEFAULT_POOL_SIZE);
     }
 
-    public static RequestQueue newBackgroundQueue(Context context, HttpStack stack,
-                                                  int threadPoolSize) {
+    /**
+     * Restituisce una nuova coda di richieste di background con uno stack OkHttp.
+     */
+    public static RequestQueue newBackgroundQueue(Context context, int threadPoolSize) {
         File cacheDir = new File(context.getCacheDir(), RequestOptions.REQUEST_CACHE_PATH);
 
-        if (stack == null) {
-            stack = createStack(context);
-        }
+        // Crea un'istanza di OkHttp e configurala
+        Network network = new BasicNetwork(createOkHttpStack());
 
-        // important part
-//        int threadPoolSize = 10; // number of network dispatcher threads to create
-        // pass Executor to constructor of ResponseDelivery object
-        ResponseDelivery delivery = new ExecutorDelivery(
-                Executors.newFixedThreadPool(threadPoolSize));
+        // Esegui le richieste in background con un pool di thread
+        ResponseDelivery delivery = new ExecutorDelivery(Executors.newFixedThreadPool(threadPoolSize));
 
-        Network network = new BasicNetwork(stack);
-
-        // pass ResponseDelivery object as a 4th parameter for RequestQueue constructor
-
-        //RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network, threadPoolSize, delivery);
-
+        // Usa NoCache se non hai bisogno di cache persistente
         RequestQueue queue = new RequestQueue(new NoCache(), network, threadPoolSize, delivery);
         queue.start();
 
         return queue;
     }
 
-    public static RequestQueue newImageQueue(Context context, HttpStack stack, int threadPoolSize) {
-        // define cache folder
+    /**
+     * Restituisce una nuova coda di richieste per le immagini.
+     */
+    public static RequestQueue newImageQueue(Context context, int threadPoolSize) {
         File rootCache = context.getExternalCacheDir();
         if (rootCache == null) {
             rootCache = context.getCacheDir();
@@ -88,13 +88,8 @@ public class RequestQueueFactory {
         File cacheDir = new File(rootCache, RequestOptions.IMAGE_CACHE_PATH);
         cacheDir.mkdirs();
 
-        if (stack == null) {
-            stack = createStack(context);
-        }
-
-        BasicNetwork network = new BasicNetwork(stack);
-        DiskBasedCache diskBasedCache = new DiskBasedCache(cacheDir,
-                RequestOptions.DEFAULT_DISK_USAGE_BYTES);
+        Network network = new BasicNetwork(createOkHttpStack());
+        DiskBasedCache diskBasedCache = new DiskBasedCache(cacheDir, RequestOptions.DEFAULT_DISK_USAGE_BYTES);
 
         RequestQueue queue = new RequestQueue(diskBasedCache, network, threadPoolSize);
         queue.start();
@@ -102,38 +97,23 @@ public class RequestQueueFactory {
         return queue;
     }
 
-    public static HttpStack createStack(Context context) {
-        HttpStack result = null;
+    /**
+     * Crea e configura uno stack di rete OkHttp per gestire le richieste di rete.
+     */
+    public static OkHttpStack createOkHttpStack() {
+        // Configura OkHttpClient
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
-        String userAgent = "volley/0";
-        try {
-            String packageName = context.getPackageName();
-            PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
-            userAgent = packageName + "/" + info.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-        }
+        // Aggiungi logging interceptor per vedere le richieste (opzionale)
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        clientBuilder.addInterceptor(loggingInterceptor);
 
-        if (Build.VERSION.SDK_INT >= 9) {
-//            result = new RedirectHurlStack();
-            result = new HurlStack() {
-                @Override
-                protected HttpURLConnection createConnection(URL url) throws IOException {
-                    HttpURLConnection connection = super.createConnection(url);
-                    connection.setInstanceFollowRedirects(false);
-                    connection.setRequestProperty("Accept-Encoding", "");
-                    connection.setRequestProperty("Connection", "close");
-                    return connection;
-                }
-            };
+        // Configura protocolli compatibili
+        clientBuilder.protocols(java.util.Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2));
 
-        } else {
-            // Prior to Gingerbread, HttpUrlConnection was unreliable.
-            // See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html
-            result = new HttpClientStack(AndroidHttpClient.newInstance(userAgent));
-        }
+        OkHttpClient okHttpClient = clientBuilder.build();
 
-        return result;
+        return new OkHttpStack(okHttpClient);
     }
-
-
 }
