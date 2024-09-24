@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("maven-publish") // Aggiungi questo plugin
 }
 
 android {
@@ -77,7 +78,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // Il nome del gruppo (utente GitHub)
             artifactId = "SupportLibrary" // Il nome del repository GitHub
-            version = "1.0.2" // La versione della tua libreria
+            version = "1.0.3" // La versione della tua libreria
         }
     }
 
