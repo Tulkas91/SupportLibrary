@@ -111,7 +111,7 @@ public class OkHttpStack extends BaseHttpStack {
         List<Header> result = new ArrayList<>();
         for (Map.Entry<String, java.util.List<String>> entry : headers.entrySet()) {
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                result.add(new BasicHeader(entry.getKey(), entry.getValue().get(0)));
+                result.add(new Header(entry.getKey(), entry.getValue().get(0)));
             }
         }
         return result;
