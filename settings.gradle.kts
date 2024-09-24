@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "SupportLibrary"
-include(":ReActiveAndroid")
+include(":Support Library")
