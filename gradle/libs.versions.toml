@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+assertjCore = "2.5.0"
 kotlin = "1.9.22"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -9,6 +10,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.2"
 constraintlayout = "2.1.4"
+mockitoCore = "1.10.19"
 playServicesLocation = "21.3.0"
 prefser = "2.0.6"
 progressview = "1.0.7"
@@ -17,9 +19,13 @@ databindingRuntime = "8.6.1"
 androidvolley = "1.2.1"
 altbeacon = "2.20.6"
 biometric = "1.1.0"
+robolectric = "3.1.2"
+rxjava = "2.1.5"
+supportAnnotations = "28.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertjCore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-volley = { group = "com.android.volley", name = "volley", version.ref = "androidvolley" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -28,6 +34,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 prefser = { module = "com.github.pwittchen:prefser", version.ref = "prefser" }
 progressview = { module = "com.github.skydoves:progressview", version.ref = "progressview" }
@@ -35,8 +42,12 @@ progressview = { module = "com.github.skydoves:progressview", version.ref = "pro
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 org-altbeacon = { group = "org.altbeacon", name = "android-beacon-library", version.ref = "altbeacon" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
+support-annotations = { module = "com.android.support:support-annotations", version.ref = "supportAnnotations" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 
