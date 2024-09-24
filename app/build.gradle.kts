@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
@@ -8,11 +8,8 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "it.mm.support_library"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -43,14 +40,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    useLibrary("org.apache.http.legacy")
+
     kotlinOptions {
         jvmTarget = "17"
     }
 }
 
 dependencies {
-
     implementation(libs.org.altbeacon)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
@@ -61,7 +57,6 @@ dependencies {
     implementation(libs.android.volley)
     implementation(libs.material)
     implementation(libs.prefser)
-//    implementation(libs.reactiveandroid)
     implementation(libs.progressview)
     implementation(libs.play.services.location)
     implementation("org.apache.httpcomponents:httpmime:4.5.6") {
@@ -73,4 +68,20 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            from(components["release"]) // Usa il componente di tipo release
+
+            groupId = "com.github.Tulkas91" // Il nome del gruppo (utente GitHub)
+            artifactId = "SupportLibrary" // Il nome del repository GitHub
+            version = "1.0.2" // La versione della tua libreria
+        }
+    }
+
+    repositories {
+        mavenLocal() // Per pubblicare in locale, necessario per JitPack
+    }
 }
