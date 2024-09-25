@@ -1,22 +1,23 @@
 package it.mm.supportlibrary.volley;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Header;
 import com.android.volley.Request;
 import com.android.volley.toolbox.BaseHttpStack;
-import com.android.volley.Header;
 import com.android.volley.toolbox.HttpResponse;
 
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.MediaType;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class OkHttpStack extends BaseHttpStack {
 
@@ -57,8 +58,8 @@ public class OkHttpStack extends BaseHttpStack {
         int responseCode = okHttpResponse.code();
         List<Header> responseHeaders = convertHeaders(okHttpResponse.headers().toMultimap());
 
-        // Creazione della HttpResponse per Volley
-        HttpResponse httpResponse = new HttpResponse(responseCode, responseHeaders, (int) okHttpResponse.body().contentLength(),  responseStream);
+        // Crea e restituisci la HttpResponse per Volley
+        HttpResponse httpResponse = new HttpResponse(responseCode, responseHeaders, convertInputStreamToByteArray(responseStream));
 
         // Assicurati di chiudere il corpo della risposta dopo l'uso per evitare perdite di risorse
         if (okHttpResponse.body() != null) {
@@ -66,6 +67,20 @@ public class OkHttpStack extends BaseHttpStack {
         }
 
         return httpResponse;
+    }
+
+    public static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+
+        // Leggi dal InputStream e scrivi nel ByteArrayOutputStream
+        while ((length = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, length);
+        }
+
+        // Converti il ByteArrayOutputStream in un array di byte
+        return byteArrayOutputStream.toByteArray();
     }
 
     /**
@@ -107,9 +122,9 @@ public class OkHttpStack extends BaseHttpStack {
     /**
      * Converte gli headers OkHttp in un formato compatibile con Volley.
      */
-    private List<Header> convertHeaders(Map<String, java.util.List<String>> headers) {
+    private List<Header> convertHeaders(Map<String, List<String>> headers) {
         List<Header> result = new ArrayList<>();
-        for (Map.Entry<String, java.util.List<String>> entry : headers.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             if (entry.getValue() != null && !entry.getValue().isEmpty()) {
                 result.add(new Header(entry.getKey(), entry.getValue().get(0)));
             }
