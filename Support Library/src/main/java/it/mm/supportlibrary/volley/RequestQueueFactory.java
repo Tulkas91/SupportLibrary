@@ -26,10 +26,10 @@ public class RequestQueueFactory {
     public static RequestQueue getQueue(Context context, String name) {
         RequestQueue result = null;
 
-        if (RequestOptions.DEFAULT_QUEUE.equals(name)) {
+        if (it.mm.supportlibrary.volley.RequestOptions.DEFAULT_QUEUE.equals(name)) {
             result = getDefault(context);
         }
-        if (RequestOptions.BACKGROUND_QUEUE.equals(name)) {
+        if (it.mm.supportlibrary.volley.RequestOptions.BACKGROUND_QUEUE.equals(name)) {
             result = newBackgroundQueue(context);
         }
 
@@ -47,21 +47,21 @@ public class RequestQueueFactory {
      * Restituisce una coda di richieste per le immagini usando OkHttp.
      */
     public static RequestQueue getImageDefault(Context context) {
-        return newImageQueue(context.getApplicationContext(), RequestOptions.DEFAULT_POOL_SIZE);
+        return newImageQueue(context.getApplicationContext(), it.mm.supportlibrary.volley.RequestOptions.DEFAULT_POOL_SIZE);
     }
 
     /**
      * Restituisce una coda di richieste di background.
      */
     public static RequestQueue newBackgroundQueue(Context context) {
-        return newBackgroundQueue(context, RequestOptions.DEFAULT_POOL_SIZE);
+        return newBackgroundQueue(context, it.mm.supportlibrary.volley.RequestOptions.DEFAULT_POOL_SIZE);
     }
 
     /**
      * Restituisce una nuova coda di richieste di background con uno stack OkHttp.
      */
     public static RequestQueue newBackgroundQueue(Context context, int threadPoolSize) {
-        File cacheDir = new File(context.getCacheDir(), RequestOptions.REQUEST_CACHE_PATH);
+        File cacheDir = new File(context.getCacheDir(), it.mm.supportlibrary.volley.RequestOptions.REQUEST_CACHE_PATH);
 
         // Crea un'istanza di OkHttp e configurala
         Network network = new BasicNetwork(createOkHttpStack());
@@ -85,7 +85,7 @@ public class RequestQueueFactory {
             rootCache = context.getCacheDir();
         }
 
-        File cacheDir = new File(rootCache, RequestOptions.IMAGE_CACHE_PATH);
+        File cacheDir = new File(rootCache, it.mm.supportlibrary.volley.RequestOptions.IMAGE_CACHE_PATH);
         cacheDir.mkdirs();
 
         Network network = new BasicNetwork(createOkHttpStack());
