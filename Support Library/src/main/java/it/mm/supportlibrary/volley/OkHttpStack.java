@@ -48,25 +48,27 @@ public class OkHttpStack extends BaseHttpStack {
         // Esegui la richiesta con OkHttp
         Response okHttpResponse = client.newCall(okHttpRequestBuilder.build()).execute();
 
-        // Gestisci il corpo della risposta in modo sicuro
-        InputStream responseStream = null;
-        if (okHttpResponse.body() != null && okHttpResponse.body().contentLength() > 0) {
-            responseStream = okHttpResponse.body().byteStream();
-        }
-
         // Estrai il codice di risposta e gli headers
         int responseCode = okHttpResponse.code();
         List<Header> responseHeaders = convertHeaders(okHttpResponse.headers().toMultimap());
 
-        // Crea e restituisci la HttpResponse per Volley
-        HttpResponse httpResponse = new HttpResponse(responseCode, responseHeaders, convertInputStreamToByteArray(responseStream));
-
-        // Assicurati di chiudere il corpo della risposta dopo l'uso per evitare perdite di risorse
+        // Gestisci il corpo della risposta in modo sicuro
+        InputStream responseStream;
+        byte[] responseBody;
         if (okHttpResponse.body() != null) {
+            responseStream = okHttpResponse.body().byteStream();
+            responseBody = convertInputStreamToByteArray(responseStream);
+            // Crea e restituisci la HttpResponse per Volley
+            HttpResponse httpResponse = new HttpResponse(responseCode, responseHeaders, responseBody);
+            // Assicurati di chiudere il corpo della risposta dopo l'uso per evitare perdite di risorse
             okHttpResponse.body().close();
+            return httpResponse;
+        } else {
+            // Se il corpo della risposta è nullo, crea un array di byte vuoto
+            responseBody = new byte[0]; // oppure puoi lasciare `null` se preferisci
+            // Crea e restituisci la HttpResponse per Volley
+            return new HttpResponse(responseCode, responseHeaders, responseBody);
         }
-
-        return httpResponse;
     }
 
     public static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
