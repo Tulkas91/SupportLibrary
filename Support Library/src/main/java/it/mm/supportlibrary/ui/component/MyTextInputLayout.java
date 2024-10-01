@@ -13,7 +13,7 @@ import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import it.sikuel.ktarip.R;
+import it.mm.supportlibrary.R;
 
 /**
  * Created by Dott. Marco Mezzasalma on 23/04/2024.
