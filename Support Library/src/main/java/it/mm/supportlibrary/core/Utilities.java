@@ -59,7 +59,7 @@ public class Utilities {
     private static HashMap<Integer, String> uploadsBelfiori = new HashMap<Integer, String>();
     private static HashMap<Integer, String> uploadsHosts = new HashMap<Integer, String>();
 
-    public void downloadFileUpdate(Context context, String url, String fileName, boolean installAPK, String authority) {
+    public static void downloadFileUpdate(Context context, String url, String fileName, boolean installAPK, String authority) {
         // Usa ProgressBar o altri metodi più moderni se preferito, ma manteniamo ProgressDialog per semplicità
         final ProgressDialog progressBarDialog = new ProgressDialog(context);
         progressBarDialog.setCancelable(false);
@@ -141,7 +141,7 @@ public class Utilities {
         executorService.shutdown(); // Assicura che l'ExecutorService venga chiuso una volta completato il task
     }
 
-    private void startInstallApk(Context context, String authority, String fileName) {
+    private static void startInstallApk(Context context, String authority, String fileName) {
         Uri apkURI = FileProvider.getUriForFile(context, authority, new File(Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName));
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
