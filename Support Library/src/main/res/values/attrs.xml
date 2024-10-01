@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright 2015-2016 Farbod Salamat-Zadeh
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<resources>
+
+    <declare-styleable name="SearchableSpinner">
+        <attr name="hintText" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="LabelledSpinner">
+
+        <!-- The text that is displayed on the floating label -->
+        <attr name="labelText" format="string" />
+        <!-- Specifies the color of the label and the bottom line -->
+        <attr name="widgetColor" format="color" />
+
+        <!-- Sets the array to be displayed on the Spinner -->
+        <attr name="spinnerEntries" format="reference" />
+
+        <!-- Controls whether an error is shown if the first item (which
+        would be a prompt) is selected and has not been changed -->
+        <attr name="defaultErrorEnabled" format="boolean" />
+
+    </declare-styleable>
+
+
+    <declare-styleable name="FlippableView">
+
+        <!-- The views for the front and back of the FlippableView -->
+        <attr name="viewFront" format="reference" />
+        <attr name="viewBack" format="reference" />
+
+    </declare-styleable>
+
+    <declare-styleable name="CircleImageView">
+        <attr name="border_width" format="dimension" />
+        <attr name="border_color" format="color" />
+        <attr name="border_overlay" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="AvatarImageView">
+        <attr name="size" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="MaterialSpinner">
+        <attr name="ms_baseColor" format="integer"/>
+        <attr name="ms_highlightColor" format="integer"/>
+        <attr name="ms_errorColor" format="integer"/>
+        <attr name="ms_error" format="string"/>
+        <attr name="ms_hint" format="string"/>
+        <attr name="ms_hintColor" format="color"/>
+        <attr name="ms_floatingLabelText" format="string"/>
+        <attr name="ms_floatingLabelColor" format="color"/>
+        <attr name="ms_multiline" format="boolean"/>
+        <attr name="ms_nbErrorLines" format="integer"/>
+        <attr name="ms_typeface" format="string"/>
+        <attr name="ms_alignLabels" format="boolean"/>
+        <attr name="ms_thickness" format="dimension"/>
+        <attr name="ms_thickness_error" format="dimension"/>
+        <attr name="ms_arrowSize" format="dimension"/>
+        <attr name="ms_arrowColor" format="color"/>
+        <attr name="ms_enableFloatingLabel" format="boolean"/>
+        <attr name="ms_enableErrorLabel" format="boolean"/>
+        <attr name="ms_isRtl" format="boolean"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="YouTubePlayerSeekBar">
+        <attr name="fontSize" format="dimension" />
+        <attr name="color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SwitchButton">
+        <attr name="sb_shadow_radius" format="reference|dimension"/>
+        <attr name="sb_shadow_offset" format="reference|dimension"/>
+        <attr name="sb_shadow_color" format="reference|color"/>
+        <attr name="sb_uncheck_color" format="reference|color"/>
+        <attr name="sb_checked_color" format="reference|color"/>
+
+        <attr name="sb_border_width" format="reference|dimension"/>
+        <attr name="sb_checkline_color" format="reference|color"/>
+        <attr name="sb_checkline_width" format="reference|dimension"/>
+        <attr name="sb_uncheckcircle_color" format="reference|color"/>
+        <attr name="sb_uncheckcircle_width" format="reference|dimension"/>
+        <attr name="sb_uncheckcircle_radius" format="reference|dimension"/>
+
+        <attr name="sb_checked" format="reference|boolean"/>
+        <attr name="sb_shadow_effect" format="reference|boolean"/>
+        <attr name="sb_effect_duration" format="reference|integer"/>
+        <attr name="sb_button_color" format="reference|color"/>
+        <attr name="sb_show_indicator" format="reference|boolean"/>
+        <attr name="sb_background" format="reference|color"/>
+        <attr name="sb_enable_effect" format="reference|boolean"/>
+
+        <attr name="sb_checkedbutton_color" format="reference|color"/>
+        <attr name="sb_uncheckbutton_color" format="reference|color"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="AnimatedCheckBox">
+        <attr name="duration" format="integer" />
+        <attr name="border_stroke_width" format="dimension" />
+        <attr name="tick_stroke_width" format="dimension" />
+        <attr name="color_tick" format="color" />
+        <attr name="color_checked" format="color" />
+        <attr name="color_unchecked" format="color" />
+        <attr name="color_unchecked_stroke" format="color" />
+        <attr name="small_tick" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MyTextInputLayout">
+        <attr name="required" format="boolean" />
+    </declare-styleable>
+</resources>

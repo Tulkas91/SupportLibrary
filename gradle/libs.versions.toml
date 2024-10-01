@@ -21,6 +21,7 @@ altbeacon = "2.20.6"
 biometric = "1.1.0"
 robolectric = "3.1.2"
 rxjava = "2.1.5"
+simplesearchview = "0.2.0"
 supportAnnotations = "28.0.0"
 
 [libraries]
@@ -46,6 +47,7 @@ org-altbeacon = { group = "org.altbeacon", name = "android-beacon-library", vers
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
+simplesearchview = { module = "com.github.Ferfalk:SimpleSearchView", version.ref = "simplesearchview" }
 support-annotations = { module = "com.android.support:support-annotations", version.ref = "supportAnnotations" }
 
 [plugins]
