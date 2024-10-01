@@ -1,15 +1,25 @@
 package it.mm.supportlibrary.core;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.app.DownloadManager;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
-import com.github.pwittchen.prefser.library.Prefser;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +39,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -46,6 +58,98 @@ public class Utilities {
     private static HashMap<Integer, String> uploadsKeys = new HashMap<Integer, String>();
     private static HashMap<Integer, String> uploadsBelfiori = new HashMap<Integer, String>();
     private static HashMap<Integer, String> uploadsHosts = new HashMap<Integer, String>();
+
+    public void downloadFileUpdate(Context context, String url, String fileName, boolean installAPK, String authority) {
+        // Usa ProgressBar o altri metodi più moderni se preferito, ma manteniamo ProgressDialog per semplicità
+        final ProgressDialog progressBarDialog = new ProgressDialog(context);
+        progressBarDialog.setCancelable(false);
+        progressBarDialog.setTitle("Scarico file in corso, attendere...");
+        progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressBarDialog.setProgress(0);
+        progressBarDialog.show();
+
+        // Gestisci il download in un ExecutorService o HandlerThread, migliore gestione dei thread
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                DownloadManager.Request dmr = new DownloadManager.Request(Uri.parse(url));
+                dmr.setTitle(fileName);
+                dmr.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+                dmr.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
+                dmr.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+
+                DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                long downloadManagerId = manager.enqueue(dmr);
+
+                boolean downloading = true;
+                while (downloading) {
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(downloadManagerId);
+                    Cursor cursor = null;
+                    try {
+                        cursor = manager.query(query);
+                        if (cursor != null && cursor.moveToFirst()) {
+                            int statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                            int bytesDownloadedColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+                            int bytesTotalColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
+
+                            // Verifica che gli indici delle colonne siano validi prima di accedere ai dati
+                            if (statusColumnIndex != -1 && bytesDownloadedColumnIndex != -1 && bytesTotalColumnIndex != -1) {
+                                int status = cursor.getInt(statusColumnIndex);
+                                int bytesDownloaded = cursor.getInt(bytesDownloadedColumnIndex);
+                                int bytesTotal = cursor.getInt(bytesTotalColumnIndex);
+
+                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                    downloading = false;
+
+                                    AndroidUtilities.runOnUIThread(() -> {
+                                        progressBarDialog.dismiss();
+                                        if (installAPK) {
+                                            startInstallApk(context, authority, fileName);
+                                        }
+                                    });
+                                }
+
+                                if (bytesTotal > 0) {
+                                    final int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
+                                    AndroidUtilities.runOnUIThread(() -> progressBarDialog.setProgress(progress));
+                                }
+                            } else {
+                                // Gestisci il caso in cui una o più colonne non siano presenti
+                                Toast.makeText(context, "Una delle colonne non è presente nel Cursor.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (cursor != null) {
+                            cursor.close(); // Assicurati di chiudere il cursor
+                        }
+                    }
+
+                    try {
+                        Thread.sleep(500); // Piccola pausa per evitare il polling continuo
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        executorService.shutdown(); // Assicura che l'ExecutorService venga chiuso una volta completato il task
+    }
+
+    private void startInstallApk(Context context, String authority, String fileName) {
+        Uri apkURI = FileProvider.getUriForFile(context, authority, new File(Environment.getExternalStorageDirectory().toString() + "/Download/" + fileName));
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+        ContextCompat.startActivity(context, intent, null);
+    }
 
     public static void updateHeightofListView(ListView listView) {
 

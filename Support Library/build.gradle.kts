@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.progressview)
     implementation(libs.play.services.location)
     implementation(libs.support.annotations)
+    implementation(libs.simplesearchview)
 
     implementation(libs.okhttp)
     implementation(libs.okhttp.urlconnection) // Supporto per HttpURLConnection
@@ -96,7 +97,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.0.8" // Versione della libreria
+            version = "1.1.0" // Versione della libreria
         }
     }
 
