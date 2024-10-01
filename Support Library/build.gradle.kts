@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.databinding.runtime)
     implementation(libs.android.volley)
+    implementation(libs.core.ktx)
     implementation(libs.material)
     implementation(libs.prefser)
     implementation(libs.progressview)
@@ -78,6 +79,7 @@ dependencies {
 
     // Dipendenze per ReactiveAndroid e Test
     implementation(libs.rxjava)
+    implementation(libs.review.ktx)
 
     // Test
     testImplementation(libs.junit)
