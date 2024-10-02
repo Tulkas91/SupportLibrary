@@ -13,9 +13,9 @@ import com.google.android.play.core.review.testing.FakeReviewManager
 import it.mm.supportlibrary.R
 
 class ReviewDialog(
-    context: Context,
+    private val activity: Activity,
     private val useFakeManager: Boolean
-) : MaterialAlertDialogBuilder(context) {
+) : MaterialAlertDialogBuilder(activity) {
 
     init {
         setTitle("Ti piace la nostra app?")
@@ -33,9 +33,9 @@ class ReviewDialog(
 
     private fun requestReview() {
         val manager: ReviewManager = if (useFakeManager) {
-            FakeReviewManager(context)
+            FakeReviewManager(activity)
         } else {
-            ReviewManagerFactory.create(context)
+            ReviewManagerFactory.create(activity)
         }
 
         val request = manager.requestReviewFlow()
@@ -43,18 +43,16 @@ class ReviewDialog(
         request.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val reviewInfo = task.result
-//                if (context is AppCompatActivity) {
-                    val flow = manager.launchReviewFlow(context as AppCompatActivity, reviewInfo)
-                    flow.addOnCompleteListener {
-                        // Flusso di recensione completato o chiuso
-                        showThankYouDialog()
-                    }
-//                }
+                val flow = manager.launchReviewFlow(activity, reviewInfo)
+                flow.addOnCompleteListener {
+                    // Flusso di recensione completato o chiuso
+                    showThankYouDialog()
+                }
             } else {
                 // In caso di errore, apri la pagina del Play Store
                 val appPackageName = context.packageName
                 val playStoreUrl = "https://play.google.com/store/apps/details?id=$appPackageName"
-                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl)))
+                activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl)))
             }
         }
     }
@@ -69,8 +67,6 @@ class ReviewDialog(
             }
             .create()
 
-        if (context is FragmentActivity) {
-            thankYouDialog.show()
-        }
+        thankYouDialog.show()
     }
 }
