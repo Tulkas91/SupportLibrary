@@ -43,13 +43,13 @@ class ReviewDialog(
         request.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val reviewInfo = task.result
-                if (context is AppCompatActivity) {
+//                if (context is AppCompatActivity) {
                     val flow = manager.launchReviewFlow(context as AppCompatActivity, reviewInfo)
                     flow.addOnCompleteListener {
                         // Flusso di recensione completato o chiuso
                         showThankYouDialog()
                     }
-                }
+//                }
             } else {
                 // In caso di errore, apri la pagina del Play Store
                 val appPackageName = context.packageName
