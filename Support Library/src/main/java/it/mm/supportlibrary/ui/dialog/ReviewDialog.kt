@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.play.core.review.ReviewManagerFactory
 
-class ReviewDialog(val context: Context) : MaterialAlertDialogBuilder(context) {
+class ReviewDialog(context: Context) : MaterialAlertDialogBuilder(context) {
 
     init {
         setTitle("Ti piace la nostra app?")

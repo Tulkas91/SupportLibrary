@@ -57,7 +57,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.databinding.runtime)
     implementation(libs.android.volley)
-    implementation(libs.core.ktx)
     implementation(libs.material)
     implementation(libs.prefser)
     implementation(libs.progressview)
@@ -99,7 +98,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.1.3" // Versione della libreria
+            version = "1.1.4" // Versione della libreria
         }
     }
 
