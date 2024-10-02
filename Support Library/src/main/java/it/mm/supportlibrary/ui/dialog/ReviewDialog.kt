@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.play.core.review.ReviewManager
@@ -42,8 +43,8 @@ class ReviewDialog(
         request.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val reviewInfo = task.result
-                if (context is Activity) {
-                    val flow = manager.launchReviewFlow(context as Activity, reviewInfo)
+                if (context is AppCompatActivity) {
+                    val flow = manager.launchReviewFlow(context as AppCompatActivity, reviewInfo)
                     flow.addOnCompleteListener {
                         // Flusso di recensione completato o chiuso
                         showThankYouDialog()
