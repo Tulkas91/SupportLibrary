@@ -1,5 +1,6 @@
 package it.mm.supportlibrary.ui.dialog
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -41,8 +42,8 @@ class ReviewDialog(
         request.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val reviewInfo = task.result
-                if (context is FragmentActivity) {
-                    val flow = manager.launchReviewFlow(context as FragmentActivity, reviewInfo)
+                if (context is Activity) {
+                    val flow = manager.launchReviewFlow(context as Activity, reviewInfo)
                     flow.addOnCompleteListener {
                         // Flusso di recensione completato o chiuso
                         showThankYouDialog()
