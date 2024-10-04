@@ -5,21 +5,14 @@
 
 package it.mm.supportlibrary.core;
 
-import static android.app.PendingIntent.FLAG_IMMUTABLE;
-
-import android.Manifest;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -28,11 +21,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.text.InputType;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.util.Log;
@@ -48,9 +37,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
@@ -70,10 +56,8 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 
 import it.mm.supportlibrary.Application;
-import it.mm.supportlibrary.R;
 
 public class AndroidUtilities {
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<String, Typeface>();
@@ -84,7 +68,7 @@ public class AndroidUtilities {
     private static int screenHeight = 0;
 
     static {
-        density = Application.Companion.getAppContext().getResources().getDisplayMetrics().density;
+        density = getActivity().getResources().getDisplayMetrics().density;
     }
 
     public static void runOnUIThread(Runnable runnable) {
@@ -171,8 +155,8 @@ public class AndroidUtilities {
         return screenWidth;
     }
 
-    public static int toPx(int dp) {
-        Resources resources = Application.Companion.getAppContext().getResources();
+    public static int toPx(Context context, int dp) {
+        Resources resources = context.getResources();
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics());
     }
 
@@ -180,11 +164,11 @@ public class AndroidUtilities {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
     }
 
-    public static Typeface getTypeface(String assetPath) {
+    public static Typeface getTypeface(Context context, String assetPath) {
         synchronized (typefaceCache) {
             if (!typefaceCache.containsKey(assetPath)) {
                 try {
-                    Typeface t = Typeface.createFromAsset(Application.Companion.getAppContext().getAssets(), assetPath);
+                    Typeface t = Typeface.createFromAsset(context.getAssets(), assetPath);
                     typefaceCache.put(assetPath, t);
                 } catch (Exception e) {
                     FileLog.e("Typefaces", "Could not get typeface '" + assetPath + "' because " + e.getMessage());
@@ -269,7 +253,7 @@ public class AndroidUtilities {
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(Application.Companion.getAppContext(), errorMessage, Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, errorMessage, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -433,9 +417,9 @@ public class AndroidUtilities {
         return "Android SDK: " + sdkVersion + " (" + release + ")";
     }
 
-    public static String getAppVersion() {
+    public static String getAppVersion(Context context) {
         try {
-            PackageInfo pInfo = Application.Companion.getAppContext().getPackageManager().getPackageInfo(Application.Companion.getAppContext().getPackageName(), 0);
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return String.format(Locale.US, "K-Tarip for Android v%s (%d)", pInfo.versionName, pInfo.versionCode);
         } catch (PackageManager.NameNotFoundException ex) {
             FileLog.e(BuildVars.TAG, ex);
