@@ -78,6 +78,7 @@ dependencies {
 
     // Dipendenze per ReactiveAndroid e Test
     implementation(libs.rxjava)
+    implementation(libs.review.ktx)
 
     // Test
     testImplementation(libs.junit)
@@ -97,7 +98,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.1.2" // Versione della libreria
+            version = "1.2.0" // Versione della libreria
         }
     }
 
