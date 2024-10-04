@@ -33,6 +33,9 @@
 
     </declare-styleable>
 
+    <declare-styleable name="OneTimeButton">
+        <attr name="timeout" format="integer" />
+    </declare-styleable>
 
     <declare-styleable name="FlippableView">
 

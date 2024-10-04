@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Build;
 import android.text.InputType;
@@ -46,9 +47,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,6 +73,7 @@ import java.util.Map;
 import java.util.Random;
 
 import it.mm.supportlibrary.Application;
+import it.mm.supportlibrary.R;
 
 public class AndroidUtilities {
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<String, Typeface>();
@@ -573,5 +577,11 @@ public class AndroidUtilities {
             return ch - '0';
         }
         throw new IllegalArgumentException(String.valueOf(ch));
+    }
+
+    public static Drawable getDrawable(Context context, int resources, int color) {
+        Drawable drawable = AppCompatResources.getDrawable(context, resources);
+        drawable.setTint(ContextCompat.getColor(context, color));
+        return drawable;
     }
 }
