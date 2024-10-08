@@ -16,9 +16,9 @@ import java.util.concurrent.Executor
 class BiometricAuthenticationHelper(val context: Context) {
 
     companion object {
-        private var executor: Executor? = null
-        private var biometricPrompt: BiometricPrompt? = null
-        private var promptInfo: PromptInfo? = null
+        var executor: Executor? = null
+        var biometricPrompt: BiometricPrompt? = null
+        var promptInfo: PromptInfo? = null
 
         fun setPrompt(fragment: Fragment, activity: Activity) {
             executor = ContextCompat.getMainExecutor(activity)
