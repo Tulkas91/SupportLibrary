@@ -67,9 +67,9 @@ public class AndroidUtilities {
     private static int screenWidth = 0;
     private static int screenHeight = 0;
 
-    static {
-        density = getActivity().getResources().getDisplayMetrics().density;
-    }
+//    static {
+//        density = getActivity().getResources().getDisplayMetrics().density;
+//    }
 
     public static void runOnUIThread(Runnable runnable) {
         runOnUIThread(runnable, 0);
