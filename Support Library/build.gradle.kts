@@ -52,17 +52,17 @@ dependencies {
     implementation(libs.org.altbeacon)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.biometric)
+    api(libs.androidx.biometric)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.databinding.runtime)
-    implementation(libs.android.volley)
+    api(libs.android.volley)
     implementation(libs.material)
     implementation(libs.prefser)
     implementation(libs.progressview)
     implementation(libs.play.services.location)
     implementation(libs.support.annotations)
-    implementation(libs.simplesearchview)
+    api(libs.simplesearchview)
 
     implementation(libs.okhttp)
     implementation(libs.okhttp.urlconnection) // Supporto per HttpURLConnection
@@ -98,7 +98,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.2.3" // Versione della libreria
+            version = "1.2.4" // Versione della libreria
         }
     }
 
