@@ -11,6 +11,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
@@ -30,7 +32,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
 import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -304,6 +310,34 @@ public class Utilities {
         return false;
     }
 
+    public static boolean checkInternetConnection(Context context) {
+        int[] networkTypes = {ConnectivityManager.TYPE_MOBILE,
+                ConnectivityManager.TYPE_WIFI, ConnectivityManager.TYPE_ETHERNET};
+        try {
+            ConnectivityManager connectivityManager =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            for (int networkType : networkTypes) {
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                if (activeNetworkInfo != null &&
+                        activeNetworkInfo.getType() == networkType) {
+                    if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_ETHERNET)
+                        return isOnline();
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    public static String getStackTrace(Throwable aThrowable) {
+        final Writer result = new StringWriter();
+        final PrintWriter printWriter = new PrintWriter(result);
+        aThrowable.printStackTrace(printWriter);
+        return result.toString();
+    }
+
     public static String padLeftZeros(String str, int n) {
         return String.format("%1$" + n + "s", str).replace(' ', '0');
     }
@@ -347,215 +381,39 @@ public class Utilities {
         return BASE_TYPES.contains(clazz);
     }
 
-//    public static void downloadAnydesk(String typeOf, String name) {
-//        if (Utilities.checkInternetConnection(KTaripApplication.getAppContext())) {
-//            Response.Listener mListener = new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject o) {
-//                    try {
-//                        if (o.getBoolean("app_found")) {
-//                            String link = o.getString("link_attachment");
-//                            AndroidUtilities.runOnUIThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    Utilities.execTerminalCommand("rm /sdcard/Download/" + name + "\n");
-//                                    downloadFileUpdate(KTaripApplication.getServerUrl() + link, name, true);
-//                                }
-//                            });
-//                        } else {
-//                            AndroidUtilities.runOnUIThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(AndroidUtilities.getActivity(), R.style.ThemeOverlay_Catalog_MaterialAlertDialog_FilledButton)
-//                                            .setTitle("Nessuna app trovata")
-//                                            .setMessage("Impossibile scaricare il file. Contattare l'assistenza.")
-//                                            .setCancelable(false).create();
-//                                    materialAlertDialog.show();
-//
-//                                    final Handler handler = new Handler();
-//                                    final Runnable runnable = new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            if (materialAlertDialog.isShowing()) {
-//                                                materialAlertDialog.dismiss();
-//                                            }
-//                                        }
-//                                    };
-//
-//                                    materialAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                                        @Override
-//                                        public void onDismiss(DialogInterface dialog) {
-//                                            handler.removeCallbacks(runnable);
-//                                        }
-//                                    });
-//
-//                                    handler.postDelayed(runnable, 2500);
-//                                }
-//                            });
-//                        }
-//                    } catch (JSONException ex) {
-//                        FileLog.e(BuildVars.TAG, ex);
-//                    }
-//                }
-//            };
-//
-//            Response.ErrorListener mErrorListener = new Response.ErrorListener() {
-//                @Override
-//                public void onErrorResponse(VolleyError volleyError) {
-//                    final NetworkResponse response = volleyError.networkResponse;
-//                    AndroidUtilities.runOnUIThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (response != null && response.statusCode == 500) {
-//                                AlertDialog materialAlertDialog = new MaterialAlertDialogBuilder(AndroidUtilities.getActivity(), R.style.ThemeOverlay_Catalog_MaterialAlertDialog_FilledButton)
-//                                        .setTitle("Errore nel server")
-//                                        .setMessage("Contattare l'assistenza.")
-//                                        .setCancelable(false).create();
-//                                materialAlertDialog.show();
-//
-//                                final Handler handler = new Handler();
-//                                final Runnable runnable = new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        if (materialAlertDialog.isShowing()) {
-//                                            materialAlertDialog.dismiss();
-//                                        }
-//                                    }
-//                                };
-//
-//                                materialAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                                    @Override
-//                                    public void onDismiss(DialogInterface dialog) {
-//                                        handler.removeCallbacks(runnable);
-//                                    }
-//                                });
-//
-//                                handler.postDelayed(runnable, 2500);
-//                                return;
-//                            }
-//                            try {
-//                                String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
-//                                if (jsonString.length() != 0) {
-//                                    JSONObject jsonObj = new JSONObject(jsonString);
-//                                    JSONArray errors = jsonObj.getJSONArray("errors");
-//                                    jsonString = errors.getJSONObject(0).getString("detail");
-//                                }
-//                            } catch (JSONException ex) {
-//                                FileLog.e("KWaterPro", ex);
-//                            } catch (UnsupportedEncodingException ex) {
-//                                FileLog.e("KWaterPro", ex);
-//                            } catch (NullPointerException ex) {
-//                                FileLog.e("KWaterPro", ex);
-//                            }
-//                        }
-//                    });
-//                }
-//            };
-//
-//            RequestManager.queue().useBackgroundQueue().clearCache();
-//            RequestManager.queue().useBackgroundQueue().addRequest(new DownloaAnydeskRequest(typeOf), mListener, mErrorListener);
-//        }
-//    }
-//
-//    public static void downloadFileUpdate(String url, String fileName, boolean installAPK) {
-//        final ProgressDialog progressBarDialog = new ProgressDialog(AndroidUtilities.getActivity());
-//        progressBarDialog.setCancelable(false);
-//        progressBarDialog.setTitle("Scarico file in corso, attendere...");
-//
-//        progressBarDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-//        progressBarDialog.setProgress(0);
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                boolean downloading = true;
-//                DownloadManager.Request dmr = new DownloadManager.Request(Uri.parse(url));
-//                dmr.setTitle(fileName);
-//                dmr.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-//                dmr.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
-//                dmr.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-//                DownloadManager manager = (DownloadManager) AndroidUtilities.getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-//                long downloadManagerId = manager.enqueue(dmr);
-//                while (downloading) {
-//                    DownloadManager.Query q = new DownloadManager.Query();
-//                    q.setFilterById(downloadManagerId); //filter by id which you have receieved when reqesting download from download manager
-//                    Cursor cursor = manager.query(q);
-//                    cursor.moveToFirst();
-//                    int bytes_downloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR));
-//                    int bytes_total = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-//
-//                    if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-//                        downloading = false;
-//                        progressBarDialog.dismiss();
-//
-//                        if (installAPK)
-//                            startInstallApk(fileName);
-//                    }
-//
-//                    final int dl_progress = (int) ((bytes_downloaded * 100l) / bytes_total);
-//
-//                    AndroidUtilities.getActivity().runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            progressBarDialog.setProgress((int) dl_progress);
-//                        }
-//                    });
-//                    cursor.close();
-//                }
-//
-//            }
-//        }).start();
-//
-//        progressBarDialog.show();
-//    }
-//
-//    private static void startInstallApk(String fileName) {
-//        Uri apkURI = FileProvider.getUriForFile(AndroidUtilities.getActivity(), "it.sikuel.ktarippro.fileprovider", new File(getSdCardPath() + "/Download/" + fileName));
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setDataAndType(apkURI, "application/vnd.android.package-archive");
-//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
-//        AndroidUtilities.getActivity().startActivity(intent);
-//    }
-//
-//    public static void clearMemory() {
-//        String targetPdf = "//data//" + KTaripApplication.getAppContext().getPackageName()
-//                + "//files";
-//        File dir = new File(Environment.getDataDirectory(), targetPdf);
-//        ArrayList<File> files = new ArrayList<File>();
-//
-//        Stack<File> dirlist = new Stack<File>();
-//        dirlist.clear();
-//        dirlist.push(dir);
-//
-//        while (!dirlist.isEmpty()) {
-//            File dirCurrent = dirlist.pop();
-//
-//            File[] fileList = dirCurrent.listFiles();
-//            for (File aFileList : fileList) {
-//                if (aFileList.isDirectory())
-//                    dirlist.push(aFileList);
-//                else {
-//                    files.add(aFileList);
-//
-//                }
-//            }
-//        }
-//
-//        Calendar time = Calendar.getInstance();
-//        time.add(Calendar.DAY_OF_YEAR, -7);
-//        Double totMemoryCleared = 0.0;
-//        for (File f : files) {
-//            Date lastModified = new Date(f.lastModified());
-//            if (lastModified.before(time.getTime())) {
-//                //file is older than a week
-//                totMemoryCleared += Double.parseDouble(String.valueOf(f.length() / 1024));
-//                f.delete();
-//            }
-//        }
-//        Toast.makeText(KTaripApplication.getAppContext(), String.format("Totale memoria liberata %.2f MB", totMemoryCleared / 1024), Toast.LENGTH_LONG).show();
-//    }
+    public static synchronized Bitmap getImageBitmap(Context context, String name) {
+
+        Bitmap b = null;
+
+        try {
+            FileInputStream fis = context.openFileInput(name);
+            //b = Utilities.decodeFile(avatarFile.getAbsolutePath(), 2048, 2048);
+            b = BitmapFactory.decodeStream(fis);
+            fis.close();
+        } catch (FileNotFoundException e) {
+            FileLog.e(BuildVars.TAG, e);
+        } catch (IOException e) {
+            FileLog.e(BuildVars.TAG, e);
+        }
+
+        return b;
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public static void zipFile(String inputPath, String outZipPath) {
         try {

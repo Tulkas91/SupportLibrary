@@ -563,6 +563,27 @@ public class AndroidUtilities {
         throw new IllegalArgumentException(String.valueOf(ch));
     }
 
+    public static String replace_word(String pattern) {
+        StringBuilder asterisk_val = new StringBuilder();
+        for (int i = 0; i < pattern.length(); i++)
+            asterisk_val.append('*');
+        return asterisk_val.toString();
+    }
+
+    public static String replace_word_no_first_char(String pattern) {
+        if (!pattern.equals("")) {
+            StringBuilder asterisk_val = new StringBuilder();
+            char[] chars = new char[1];
+            pattern.getChars(0, 1, chars, 0);
+            asterisk_val.append(chars);
+            for (int i = 1; i < pattern.length(); i++)
+                asterisk_val.append('*');
+            return asterisk_val.toString();
+        } else {
+            return pattern;
+        }
+    }
+
     public static Drawable getDrawable(Context context, int resources, int color) {
         Drawable drawable = AppCompatResources.getDrawable(context, resources);
         drawable.setTint(ContextCompat.getColor(context, color));

@@ -50,14 +50,14 @@ android {
 dependencies {
     // Dipendenze principali
     implementation(libs.org.altbeacon)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.appcompat)
+    api(libs.androidx.activity)
+    api(libs.androidx.appcompat)
     api(libs.androidx.biometric)
-    implementation(libs.androidx.constraintlayout)
+    api(libs.androidx.constraintlayout)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.databinding.runtime)
     api(libs.android.volley)
-    implementation(libs.material)
+    api(libs.material)
     implementation(libs.prefser)
     implementation(libs.progressview)
     implementation(libs.play.services.location)
@@ -98,7 +98,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.2.4" // Versione della libreria
+            version = "1.2.5" // Versione della libreria
         }
     }
 
