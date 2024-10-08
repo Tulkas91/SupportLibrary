@@ -6,6 +6,8 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -149,6 +151,59 @@ public class Utilities {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
         ContextCompat.startActivity(context, intent, null);
+    }
+
+    // Funzione per aprire l'app di supporto remoto
+    public static void openRemoteSupportApp(Context context) {
+        PackageManager packageManager = context.getPackageManager();
+
+        // Definizione dei package delle app
+        String quickSupportPackage = "com.teamviewer.quicksupport.market";
+        String anyDeskPackage = "com.anydesk.anydeskandroid";
+
+        // Verifica se TeamViewer QuickSupport è installato
+        boolean isQuickSupportInstalled = isAppInstalled(packageManager, quickSupportPackage);
+
+        // Verifica se AnyDesk è installato
+        boolean isAnyDeskInstalled = isAppInstalled(packageManager, anyDeskPackage);
+
+        if (isQuickSupportInstalled) {
+            // Apri TeamViewer QuickSupport
+            Intent intent = packageManager.getLaunchIntentForPackage(quickSupportPackage);
+            if (intent != null) {
+                context.startActivity(intent);
+            } else {
+                // Se non è possibile aprire QuickSupport, gestisci l'errore
+                showError(context, "Non è possibile aprire QuickSupport.");
+            }
+        } else if (isAnyDeskInstalled) {
+            // Apri AnyDesk
+            Intent intent = packageManager.getLaunchIntentForPackage(anyDeskPackage);
+            if (intent != null) {
+                context.startActivity(intent);
+            } else {
+                // Se non è possibile aprire AnyDesk, gestisci l'errore
+                showError(context, "Non è possibile aprire AnyDesk.");
+            }
+        } else {
+            // Nessuna app installata, gestisci il caso
+            showError(context, "Né QuickSupport né AnyDesk sono installati.");
+        }
+    }
+
+    // Funzione per verificare se l'app è installata
+    private static boolean isAppInstalled(PackageManager packageManager, String packageName) {
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+            return packageInfo != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    // Funzione per mostrare un messaggio di errore
+    private static void showError(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
     }
 
     public static void updateHeightofListView(ListView listView) {
