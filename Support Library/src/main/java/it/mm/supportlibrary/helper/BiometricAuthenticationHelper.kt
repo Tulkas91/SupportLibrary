@@ -10,16 +10,25 @@ import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import it.mm.supportlibrary.core.NotificationCenter
 import java.util.concurrent.Executor
 
 class BiometricAuthenticationHelper(val context: Context) {
 
     companion object {
-        var executor: Executor? = null
-        var biometricPrompt: BiometricPrompt? = null
-        var promptInfo: PromptInfo? = null
+        private var executor: Executor? = null
+        private var biometricPrompt: BiometricPrompt? = null
+        private var promptInfo: PromptInfo? = null
 
+        // LiveData per l'autenticazione
+        @JvmStatic
+        private val _authenticationResult = MutableLiveData<Boolean>()
+        @JvmStatic
+        val authenticationResult: LiveData<Boolean> get() = _authenticationResult
+
+        @JvmStatic
         fun setPrompt(fragment: Fragment, activity: Activity) {
             executor = ContextCompat.getMainExecutor(activity)
             biometricPrompt = BiometricPrompt(
@@ -28,36 +37,22 @@ class BiometricAuthenticationHelper(val context: Context) {
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                         super.onAuthenticationError(errorCode, errString)
-                        //                Toast.makeText(getApplicationContext(),
-//                        "Authentication error: " + errString, Toast.LENGTH_SHORT)
-//                        .show();
+                        _authenticationResult.postValue(false)
                     }
 
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        NotificationCenter.getInstance()
-                            .postNotificationName(NotificationCenter.biometricAuthenticationSuccess)
-//                    if (KTaripApplication.getInstance().getPrefs().getBoolean("rememberLogin", false)) {
-//                        inputEmail.setText(
-//                            KTaripApplication.getInstance().getPrefs().getString("email", "")
-//                        )
-//                        inputPassword.setText(
-//                            KTaripApplication.getInstance().getPrefs().getString("password", "")
-//                        )
-//                        checkBoxRemember.setChecked(true, true)
-//                        login()
-//                    }
+                        _authenticationResult.postValue(true)
                     }
 
                     override fun onAuthenticationFailed() {
                         super.onAuthenticationFailed()
-                        //                Toast.makeText(getApplicationContext(), "Authentication failed",
-//                        Toast.LENGTH_SHORT)
-//                        .show();
+                        _authenticationResult.postValue(false)
                     }
                 })
         }
 
+        @JvmStatic
         fun initBiometricPrompt(
             title: String,
             subtitle: String,
@@ -79,10 +74,12 @@ class BiometricAuthenticationHelper(val context: Context) {
                     .build()
         }
 
+        @JvmStatic
         fun showBiometricDialog() {
             biometricPrompt!!.authenticate(promptInfo!!)
         }
 
+        @JvmStatic
         fun isBiometricHardWareAvailable(context: Context?): Boolean {
             var result = false
             val biometricManager = BiometricManager.from(
@@ -110,6 +107,7 @@ class BiometricAuthenticationHelper(val context: Context) {
             return result
         }
 
+        @JvmStatic
         fun deviceHasPasswordPinLock(context: Context): Boolean {
             val keymgr =
                 context.getSystemService(AppCompatActivity.KEYGUARD_SERVICE) as KeyguardManager
@@ -117,6 +115,7 @@ class BiometricAuthenticationHelper(val context: Context) {
             return false
         }
 
+        @JvmStatic
         fun replace_word(pattern: String): String {
             val asterisk_val = StringBuilder()
             for (i in 0 until pattern.length) asterisk_val.append('*')
