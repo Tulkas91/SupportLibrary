@@ -9,6 +9,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.Shape;
 
+import java.util.Random;
+
 public class TextDrawable extends ShapeDrawable {
 
     private final Paint textPaint;
@@ -36,5 +38,17 @@ public class TextDrawable extends ShapeDrawable {
         int y = (int) (bounds.centerY() - ((textPaint.descent() + textPaint.ascent()) / 2));
 
         canvas.drawText(text, x, y, textPaint);
+    }
+
+    public static int getRandomColor() {
+        Random random = new Random();
+
+        // Genera i valori casuali per i componenti RGB (da 0 a 255)
+        int red = random.nextInt(256);   // Valore tra 0 e 255
+        int green = random.nextInt(256); // Valore tra 0 e 255
+        int blue = random.nextInt(256);  // Valore tra 0 e 255
+
+        // Crea il colore utilizzando i componenti RGB
+        return Color.rgb(red, green, blue);
     }
 }
