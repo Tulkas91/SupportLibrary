@@ -19,7 +19,6 @@ public class TextDrawable extends ShapeDrawable {
     public TextDrawable(String text) {
         super(new OvalShape());
         this.text = text;
-        this.color = getRandomColor();
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
