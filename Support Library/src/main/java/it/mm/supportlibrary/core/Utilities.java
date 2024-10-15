@@ -360,17 +360,6 @@ public class Utilities {
                     changedProperties.add(parent + "." + field.getName());
                 }
             }
-//            if (value1 == null || value2 == null) {
-//                changedProperties.add(parent + "." + field.getName());
-//            } else {
-//                if (isBaseType(value1.getClass())) {
-//                    if (!Objects.equals(value1, value2)) {
-//                        changedProperties.add(parent + "." + field.getName());
-//                    }
-//                } else {
-//                    difference(value1, value2, changedProperties, parent + "." + field.getName());
-//                }
-//            }
         }
     }
 
