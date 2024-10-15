@@ -15,18 +15,17 @@ public class TextDrawable extends ShapeDrawable {
 
     private final Paint textPaint;
     private final String text;
-    private final int color;
 
-    public TextDrawable(String text, int color) {
+    public TextDrawable(String text) {
         super(new OvalShape());
         this.text = text;
-        this.color = color;
+        this.color = getRandomColor();
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
         textPaint.setAntiAlias(true);
         textPaint.setTextAlign(Align.CENTER);
         textPaint.setTextSize(48f);
-        getPaint().setColor(color);
+        getPaint().setColor(getRandomColor());
     }
 
     @Override
