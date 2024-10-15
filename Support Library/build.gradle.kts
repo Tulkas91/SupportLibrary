@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.progressview)
     implementation(libs.play.services.location)
     implementation(libs.support.annotations)
+    api(libs.retrofit)
+    api(libs.converter.gson)
     api(libs.simplesearchview)
 
     implementation(libs.okhttp)

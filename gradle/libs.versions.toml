@@ -19,6 +19,7 @@ databindingRuntime = "8.6.1"
 androidvolley = "1.2.1"
 altbeacon = "2.20.6"
 biometric = "1.1.0"
+retrofit = "2.5.0"
 robolectric = "3.1.2"
 rxjava = "2.2.9"
 simplesearchview = "0.2.0"
@@ -28,6 +29,7 @@ reviewKtx = "2.0.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertjCore" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-volley = { group = "com.android.volley", name = "volley", version.ref = "androidvolley" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -46,6 +48,7 @@ progressview = { module = "com.github.skydoves:progressview", version.ref = "pro
 androidx-databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 org-altbeacon = { group = "org.altbeacon", name = "android-beacon-library", version.ref = "altbeacon" }
 androidx-biometric = { group = "androidx.biometric", name = "biometric", version.ref = "biometric" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 simplesearchview = { module = "com.github.Ferfalk:SimpleSearchView", version.ref = "simplesearchview" }
