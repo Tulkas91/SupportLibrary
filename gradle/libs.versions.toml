@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.1"
 assertjCore = "2.5.0"
+commonsLang3 = "3.14.0"
 kotlin = "1.9.22"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -29,6 +30,7 @@ reviewKtx = "2.0.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertjCore" }
+commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-volley = { group = "com.android.volley", name = "volley", version.ref = "androidvolley" }

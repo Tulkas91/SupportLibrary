@@ -20,7 +20,9 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Build;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Base64OutputStream;
@@ -39,6 +41,7 @@ import android.widget.Toast;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.ContextCompat;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -82,6 +85,27 @@ public class AndroidUtilities {
             Application.Companion.getApplicationHandler().postDelayed(runnable, delay);
         }
     }
+
+    private String changeCharacterSet = ".";
+
+    private InputFilter filterPointToComma = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            if (dest.length() == 0 && (source.toString().equals(",") || source.toString().equals("."))) {
+                return "";
+            }
+
+            if (StringUtils.countMatches(dest, ",") == 1 && source.toString().equals(",")) {
+                return "";
+            }
+
+            if (source != null && !source.toString().equals("") && changeCharacterSet.contains((source.toString()))) {
+                return StringUtils.countMatches(dest, ",") < 1 ? "," : "";
+            }
+
+            return null;
+        }
+    };
 
     public static void cancelRunOnUIThread(Runnable runnable) {
         Application.Companion.getApplicationHandler().removeCallbacks(runnable);
