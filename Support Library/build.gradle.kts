@@ -92,6 +92,9 @@ dependencies {
     testImplementation(libs.robolectric)
 }
 
+//git tag v1.2.16
+//git push origin v1.2.16
+
 publishing {
     publications {
         create<MavenPublication>("release") {
