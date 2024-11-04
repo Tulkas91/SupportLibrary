@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/linearButtonVocal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp"
+        android:visibility="gone">
+
+        <!-- Pulsante Rec -->
+        <ImageButton
+            android:id="@+id/button_record"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/rec"
+            android:contentDescription="Registra"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/md_red_500" />
+
+        <!-- Pulsante Play -->
+        <ImageButton
+            android:id="@+id/button_play"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/play_circle"
+            android:contentDescription="Riproduci"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/green_500"
+            android:layout_marginStart="16dp" />
+
+        <!-- Pulsante Pausa -->
+        <ImageButton
+            android:id="@+id/button_pause"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/pause_circle"
+            android:contentDescription="Pausa"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/md_yellow_600"
+            android:layout_marginStart="16dp" />
+
+        <!-- Pulsante Stop -->
+        <ImageButton
+            android:id="@+id/button_stop"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/stop_circle"
+            android:contentDescription="Stop"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/black"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
+
+    <!-- SeekBar per la riproduzione -->
+    <SeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Testo che mostra il tempo corrente -->
+    <TextView
+        android:id="@+id/tv_current_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:layout_gravity="center_horizontal" />
+</merge>
