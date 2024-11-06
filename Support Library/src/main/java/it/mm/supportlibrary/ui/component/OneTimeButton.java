@@ -3,13 +3,11 @@ package it.mm.supportlibrary.ui.component;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
 import android.util.AttributeSet;
 
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.content.ContextCompat;
 
 import it.mm.supportlibrary.R;
 import it.mm.supportlibrary.core.AndroidUtilities;
@@ -18,13 +16,13 @@ import it.mm.supportlibrary.core.AndroidUtilities;
  * Created by Dott. Ing. Giovanni Accetta on 15/09/17.
  */
 public class OneTimeButton extends AppCompatButton {
-    private int timoeut;
+    private int timeout;
     private CountDownTimer timer = null;
 
     public void startTimer(Context context) {
-        if (timer != null && timoeut > 0) {
+        if (timer != null && timeout > 0) {
             setEnabled(false);
-            setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            setTextColor(AppCompatResources.getColorStateList(context, R.color.colorPrimary));
             timer.start();
         }
     }
@@ -37,7 +35,7 @@ public class OneTimeButton extends AppCompatButton {
                 0, 0);
 
         try {
-            timoeut = a.getInteger(R.styleable.OneTimeButton_timeout, 0);
+            timeout = a.getInteger(R.styleable.OneTimeButton_timeout, 0);
             setTimer();
         } finally {
             a.recycle();
@@ -45,7 +43,7 @@ public class OneTimeButton extends AppCompatButton {
     }
 
     private void setTimer() {
-        timer = new CountDownTimer(timoeut, 1000) {
+        timer = new CountDownTimer(timeout, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
