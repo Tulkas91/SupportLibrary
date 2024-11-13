@@ -1,72 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardEnd"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:clickable="false"
+    android:focusable="false"
+    android:foreground="?android:attr/selectableItemBackground"
+    card_view:cardCornerRadius="8dp"
+    card_view:cardElevation="0dp"
+    card_view:cardUseCompatPadding="true">
 
     <LinearLayout
-        android:id="@+id/linearButtonVocal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="24dp"
-        android:visibility="gone">
+        android:orientation="vertical">
 
-        <!-- Pulsante Rec -->
-        <ImageButton
-            android:id="@+id/button_record"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/rec"
-            android:contentDescription="Registra"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/md_red_500" />
+        <FrameLayout
+            android:id="@+id/linear_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <!-- Pulsante Play -->
-        <ImageButton
-            android:id="@+id/button_play"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/play_circle"
-            android:contentDescription="Riproduci"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/green_500"
-            android:layout_marginStart="16dp" />
+            <TextView
+                android:id="@+id/file_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginVertical="10dp"
+                android:paddingHorizontal="10dp"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="18sp" />
 
-        <!-- Pulsante Pausa -->
-        <ImageButton
-            android:id="@+id/button_pause"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/pause_circle"
-            android:contentDescription="Pausa"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/md_yellow_600"
-            android:layout_marginStart="16dp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_delete"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="end"
+                android:background="@drawable/delete_forever"
+                android:backgroundTint="@color/md_red_500"
+                android:gravity="end"
+                android:contentDescription="Cancella" />
 
-        <!-- Pulsante Stop -->
-        <ImageButton
-            android:id="@+id/button_stop"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/stop_circle"
-            android:contentDescription="Stop"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/black"
-            android:layout_marginStart="16dp" />
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/md_grey_400"/>
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/recording_buttons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginVertical="10dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_record"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Registra"
+                android:minWidth="50dp"
+                app:icon="@drawable/rec"
+                app:iconPadding="0dp"
+                app:iconTint="@color/md_red_500" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_play"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Riproduci"
+                android:minWidth="50dp"
+                app:icon="@drawable/play_circle"
+                app:iconPadding="0dp"
+                app:iconTint="@color/green_500" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_stop"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Stop"
+                android:minWidth="50dp"
+                app:icon="@drawable/stop_circle"
+                app:iconPadding="0dp"
+                app:iconTint="@color/black" />
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Testo che mostra il tempo corrente -->
+            <TextView
+                android:id="@+id/tv_current_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
+                android:text="00:00" />
+
+            <!-- Testo che mostra il tempo totale -->
+            <TextView
+                android:id="@+id/tv_total_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:text="00:00" />
+
+            <!-- SeekBar per la riproduzione -->
+            <SeekBar
+                android:id="@+id/seek_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_toStartOf="@id/tv_total_time"
+                android:layout_toEndOf="@id/tv_current_time" />
+        </RelativeLayout>
+
     </LinearLayout>
-
-    <!-- SeekBar per la riproduzione -->
-    <SeekBar
-        android:id="@+id/seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
-
-    <!-- Testo che mostra il tempo corrente -->
-    <TextView
-        android:id="@+id/tv_current_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="00:00"
-        android:layout_gravity="center_horizontal" />
-</merge>
+</com.google.android.material.card.MaterialCardView>

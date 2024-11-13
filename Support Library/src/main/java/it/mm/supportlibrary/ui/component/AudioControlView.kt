@@ -5,11 +5,16 @@ import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.google.android.material.button.MaterialButton
 import it.mm.supportlibrary.R
 import java.io.IOException
 
@@ -21,17 +26,38 @@ class AudioControlView @JvmOverloads constructor(
 
     private var mediaRecorder: MediaRecorder? = null
     private var mediaPlayer: MediaPlayer? = null
-    var fileName = ""
+    var filePath = ""
+    var fileName = MutableLiveData<String>()
 
     private var isRecording = false
     private var isPlaying = false
 
-    private lateinit var buttonRecord: ImageButton
-    private lateinit var buttonPlay: ImageButton
-    private lateinit var buttonPause: ImageButton
-    private lateinit var buttonStop: ImageButton
+    private lateinit var tvFileName: TextView
+    lateinit var buttonDelete: MaterialButton
+    private lateinit var buttonRecord: MaterialButton
+    private lateinit var buttonPlay: MaterialButton
+    private lateinit var buttonStop: MaterialButton
     private lateinit var seekBar: SeekBar
     private lateinit var tvCurrentTime: TextView
+    private lateinit var tvTotalTime: TextView
+
+    // Imposta una variabile LifecycleOwner
+    private var lifecycleOwner: LifecycleOwner? = null
+
+    // Funzione per impostare il LifecycleOwner
+    fun setLifecycleOwner(owner: LifecycleOwner) {
+        lifecycleOwner = owner
+        observeFileName()
+    }
+
+    private fun observeFileName() {
+        lifecycleOwner?.let { owner ->
+            fileName.observe(owner, Observer { updateText ->
+                tvFileName.text = updateText
+            })
+        }
+    }
+
 
     init {
         // Infla il layout e collega i componenti
@@ -40,12 +66,17 @@ class AudioControlView @JvmOverloads constructor(
     }
 
     private fun initializeViews() {
+        tvFileName = findViewById(R.id.file_name)
+        buttonDelete = findViewById(R.id.button_delete)
         buttonRecord = findViewById(R.id.button_record)
         buttonPlay = findViewById(R.id.button_play)
-        buttonPause = findViewById(R.id.button_pause)
         buttonStop = findViewById(R.id.button_stop)
         seekBar = findViewById(R.id.seek_bar)
         tvCurrentTime = findViewById(R.id.tv_current_time)
+        tvTotalTime = findViewById(R.id.tv_total_time)
+
+        buttonPlay.isVisible = false
+        buttonStop.isVisible = false
 
         // Aggiungi i listener per i pulsanti
         buttonRecord.setOnClickListener {
@@ -64,14 +95,9 @@ class AudioControlView @JvmOverloads constructor(
             }
         }
 
-        buttonPause.setOnClickListener {
-            pauseAudio()
-        }
-
         buttonStop.setOnClickListener {
             stopAudio()
         }
-
 
         // Configura la SeekBar
         seekBar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
@@ -102,16 +128,16 @@ class AudioControlView @JvmOverloads constructor(
         if (isRecording) {
             // Ferma la registrazione
             stopRecording()
-            buttonRecord.setImageResource(R.drawable.rec)
-            buttonPlay.isEnabled = true
-            buttonStop.isEnabled = false
+            buttonRecord.icon = ContextCompat.getDrawable(context, R.drawable.rec)
+            buttonPlay.isVisible = true
+            buttonStop.isVisible = true
             isRecording = false
         } else {
             // Inizia la registrazione
             startRecording()
-            buttonRecord.setImageResource(R.drawable.stop_circle)
-            buttonPlay.isEnabled = false
-            buttonStop.isEnabled = false
+            buttonRecord.icon = ContextCompat.getDrawable(context, R.drawable.stop_circle)
+            buttonPlay.isVisible = false
+            buttonStop.isVisible = false
             isRecording = true
         }
     }
@@ -121,7 +147,7 @@ class AudioControlView @JvmOverloads constructor(
         mediaRecorder = MediaRecorder()
         mediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mediaRecorder!!.setOutputFile(fileName)
+        mediaRecorder!!.setOutputFile(filePath)
         mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
         mediaRecorder!!.prepare()
         mediaRecorder!!.start()
@@ -137,17 +163,14 @@ class AudioControlView @JvmOverloads constructor(
     private fun playAudio() {
         if (!isPlaying) {
             mediaPlayer = MediaPlayer()
-            mediaPlayer!!.setDataSource(fileName)
+            mediaPlayer!!.setDataSource(filePath)
             mediaPlayer!!.prepare()
             mediaPlayer!!.start()
 
             seekBar.max = mediaPlayer!!.duration
             updateSeekBar()
 
-            buttonPlay.setImageResource(R.drawable.pause_circle)
-            buttonPause.isEnabled = true
-            buttonStop.isEnabled = true
-            buttonRecord.isEnabled = false
+            buttonPlay.icon = ContextCompat.getDrawable(context, R.drawable.pause_circle)
             isPlaying = true
 
             mediaPlayer!!.setOnCompletionListener { resetPlayer() }
@@ -160,11 +183,11 @@ class AudioControlView @JvmOverloads constructor(
         if (mediaPlayer != null) {
             if (mediaPlayer!!.isPlaying) {
                 mediaPlayer!!.pause()
-                buttonPlay.setImageResource(R.drawable.play_circle)
+                buttonPlay.icon = ContextCompat.getDrawable(context, R.drawable.play_circle)
                 isPlaying = false
             } else {
                 mediaPlayer!!.start()
-                buttonPlay.setImageResource(R.drawable.pause_circle)
+                buttonPlay.icon = ContextCompat.getDrawable(context, R.drawable.pause_circle)
                 isPlaying = true
             }
         }
@@ -178,11 +201,7 @@ class AudioControlView @JvmOverloads constructor(
     }
 
     private fun resetPlayer() {
-        buttonPlay.setImageResource(R.drawable.play_circle)
-        buttonPlay.isEnabled = true
-        buttonPause.isEnabled = false
-        buttonStop.isEnabled = false
-        buttonRecord.isEnabled = true
+        buttonPlay.icon = ContextCompat.getDrawable(context, R.drawable.play_circle)
         isPlaying = false
 
         if (mediaPlayer != null) {
@@ -205,6 +224,7 @@ class AudioControlView @JvmOverloads constructor(
                 val currentPosition = mediaPlayer!!.currentPosition
                 seekBar.progress = currentPosition
                 tvCurrentTime.text = formatTime(currentPosition)
+                tvTotalTime.text = formatTime(seekBar.max)
                 handler.postDelayed(this, 1000)
             }
         }
