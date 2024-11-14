@@ -58,7 +58,6 @@ class AudioControlView @JvmOverloads constructor(
         }
     }
 
-
     init {
         // Infla il layout e collega i componenti
         LayoutInflater.from(context).inflate(R.layout.view_audio_control, this, true)
