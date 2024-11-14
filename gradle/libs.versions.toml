@@ -26,6 +26,7 @@ rxjava = "2.2.9"
 simplesearchview = "0.2.0"
 supportAnnotations = "28.0.0"
 reviewKtx = "2.0.2"
+coreKtxVersion = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -56,6 +57,7 @@ rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 simplesearchview = { module = "com.github.Ferfalk:SimpleSearchView", version.ref = "simplesearchview" }
 support-annotations = { module = "com.android.support:support-annotations", version.ref = "supportAnnotations" }
 review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "reviewKtx" }
+core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "coreKtxVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

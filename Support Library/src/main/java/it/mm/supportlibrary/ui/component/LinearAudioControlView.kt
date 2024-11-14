@@ -8,7 +8,9 @@ import android.widget.LinearLayout
 import androidx.core.view.isEmpty
 import androidx.lifecycle.LifecycleOwner
 import it.mm.supportlibrary.R
+import it.mm.supportlibrary.core.Utilities
 import it.mm.supportlibrary.databinding.LinearAudioControlBinding
+import java.util.ArrayList
 
 class LinearAudioControlView @JvmOverloads constructor(
     context: Context,
@@ -16,11 +18,12 @@ class LinearAudioControlView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : LinearLayout(context, attrs, defStyleAttr) {
 
+    var audioListPath = ArrayList<String>()
     var parentFilePath = ""
     var count = 0
 
     // Infla il layout e collega i componenti
-    private var binding: LinearAudioControlBinding =
+    var binding: LinearAudioControlBinding =
         LinearAudioControlBinding.inflate(LayoutInflater.from(context), this, true)
 
     // Imposta una variabile LifecycleOwner
@@ -37,6 +40,7 @@ class LinearAudioControlView @JvmOverloads constructor(
 
     private fun initializeViews() {
         count = 0
+        audioListPath = ArrayList<String>()
         binding.newAudio.setIconResource(R.drawable.add)
         binding.newAudio.setOnClickListener {
             binding.tvMessage.visibility = View.GONE
@@ -46,7 +50,13 @@ class LinearAudioControlView @JvmOverloads constructor(
                 setLifecycleOwner(lifecycleOwner!!)
                 buttonDelete.setOnClickListener {
                     binding.audioList.removeView(this)
+                    if (isAudioSaved.value!!) Utilities.deleteFile(filePath)
                     if (binding.audioList.isEmpty()) binding.tvMessage.visibility = View.VISIBLE
+                }
+                isAudioSaved.observe(lifecycleOwner!!) {
+                    if (it) {
+                        audioListPath.add(filePath)
+                    }
                 }
             }
             audioControlView.fileName.value = "Audio $count"

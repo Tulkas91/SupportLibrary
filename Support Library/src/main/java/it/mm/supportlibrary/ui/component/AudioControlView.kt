@@ -28,6 +28,7 @@ class AudioControlView @JvmOverloads constructor(
     private var mediaPlayer: MediaPlayer? = null
     var filePath = ""
     var fileName = MutableLiveData<String>()
+    var isAudioSaved = MutableLiveData<Boolean>()
 
     private var isRecording = false
     private var isPlaying = false
@@ -76,6 +77,7 @@ class AudioControlView @JvmOverloads constructor(
 
         buttonPlay.isVisible = false
         buttonStop.isVisible = false
+        isAudioSaved.value = false
 
         // Aggiungi i listener per i pulsanti
         buttonRecord.setOnClickListener {
@@ -127,6 +129,7 @@ class AudioControlView @JvmOverloads constructor(
         if (isRecording) {
             // Ferma la registrazione
             stopRecording()
+            isAudioSaved.value = true
             buttonRecord.icon = ContextCompat.getDrawable(context, R.drawable.rec)
             buttonPlay.isVisible = true
             buttonStop.isVisible = true

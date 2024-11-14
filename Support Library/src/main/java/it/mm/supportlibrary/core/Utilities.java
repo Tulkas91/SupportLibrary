@@ -558,6 +558,15 @@ public class Utilities {
         return 0;
     }
 
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return false;
+        }
+    }
+
     public static void moveFile(String inputPath, String inputFile, String outputPath) {
 
         InputStream in = null;
