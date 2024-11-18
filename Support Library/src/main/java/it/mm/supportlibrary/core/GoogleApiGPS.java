@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 
 public class GoogleApiGPS {
 
-    private Activity activity;
+//    private Activity activity;
     private Context context;
     private Location finalLocation;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -41,9 +41,9 @@ public class GoogleApiGPS {
         df.setRoundingMode(RoundingMode.CEILING);
     }
 
-    public GoogleApiGPS(Context ctx, Activity act) {
+    public GoogleApiGPS(Context ctx) {
         context = ctx;
-        activity = act;
+//        activity = act;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         locationCallback = new LocationCallback() {
             @Override
@@ -62,29 +62,29 @@ public class GoogleApiGPS {
         };
 
         // Avvia gli aggiornamenti solo se Play Services sono disponibili
-        if (checkPlayServices()) {
-            startLocationUpdates();
-        }
+//        if (checkPlayServices()) {
+//            startLocationUpdates();
+//        }
     }
 
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(context);
+//    private boolean checkPlayServices() {
+//        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+//        int resultCode = apiAvailability.isGooglePlayServicesAvailable(context);
+//
+//        if (resultCode != ConnectionResult.SUCCESS) {
+//            if (apiAvailability.isUserResolvableError(resultCode)) {
+//                apiAvailability.getErrorDialog(activity, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
 
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(activity, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    private void startLocationUpdates() {
-        if (!hasLocationPermission()) {
-            requestLocationPermission();
-            return;
-        }
+    public void startLocationUpdates() {
+//        if (!hasLocationPermission()) {
+//            requestLocationPermission();
+//            return;
+//        }
 
         try {
             LocationRequest locationRequest = new LocationRequest.Builder(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL)
@@ -98,23 +98,27 @@ public class GoogleApiGPS {
         }
     }
 
+    public void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+
     private boolean hasLocationPermission() {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    private void requestLocationPermission() {
-        Toast.makeText(context, "You need to enable permissions to display location!", Toast.LENGTH_SHORT).show();
-        ActivityCompat.requestPermissions(activity, new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-        }, 1);
-    }
+//    private void requestLocationPermission() {
+//        Toast.makeText(context, "You need to enable permissions to display location!", Toast.LENGTH_SHORT).show();
+//        ActivityCompat.requestPermissions(activity, new String[]{
+//                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
+//        }, 1);
+//    }
 
     public Location getFinalLocation() {
-        if (!hasLocationPermission()) {
-            requestLocationPermission();
-            return null;
-        }
+//        if (!hasLocationPermission()) {
+//            requestLocationPermission();
+//            return null;
+//        }
 
         try {
             fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
