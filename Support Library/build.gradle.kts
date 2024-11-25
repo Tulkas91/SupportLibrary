@@ -63,8 +63,8 @@ dependencies {
     implementation(libs.androidx.databinding.runtime)
     api(libs.android.volley)
     api(libs.material)
-    implementation(libs.prefser)
-    implementation(libs.progressview)
+    api(libs.prefser)
+    api(libs.progressview)
     implementation(libs.play.services.location)
     implementation(libs.support.annotations)
     implementation(libs.commons.lang3)
@@ -110,7 +110,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.3.5" // Versione della libreria
+            version = "1.3.6" // Versione della libreria
         }
     }
 

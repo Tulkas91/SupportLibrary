@@ -613,4 +613,9 @@ public class AndroidUtilities {
         drawable.setTint(ContextCompat.getColor(context, color));
         return drawable;
     }
+
+    public static Drawable getDrawable(Context context, int resources) {
+        Drawable drawable = AppCompatResources.getDrawable(context, resources);
+        return drawable;
+    }
 }
