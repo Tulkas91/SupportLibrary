@@ -129,17 +129,17 @@ public class RequestManager {
             mContext = context;
         }
 
-        public RequestController use(String queueName) {
+        public RequestController use(String queueName) throws Exception {
             validateQueue(queueName);
             mCurQueue = queueName;
             return mRequestController;
         }
 
-        public RequestController useDefaultQueue() {
+        public RequestController useDefaultQueue() throws Exception {
             return use(RequestOptions.DEFAULT_QUEUE);
         }
 
-        public RequestController useBackgroundQueue() {
+        public RequestController useBackgroundQueue() throws Exception {
             return use(RequestOptions.BACKGROUND_QUEUE);
         }
 
@@ -151,7 +151,7 @@ public class RequestManager {
             mRequestQueue.put(queueName, requestQueue);
         }
 
-        private void validateQueue(String queueName) {
+        private void validateQueue(String queueName) throws Exception {
             if (!mRequestQueue.containsKey(queueName)) {
                 final RequestQueue queue = RequestQueueFactory.getQueue(mContext, queueName);
                 if (queue != null) {
@@ -192,7 +192,7 @@ public class RequestManager {
             return mImageLoaderController;
         }
 
-        public ImageLoaderController useDefaultLoader() {
+        public ImageLoaderController useDefaultLoader() throws Exception {
             createDefaultLoader();
             mCurLoader = RequestOptions.DEFAULT_LOADER;
             return mImageLoaderController;
@@ -208,7 +208,7 @@ public class RequestManager {
             mLoaders.put(loaderName, new ImageLoader(queue, bitmapLruCache));
         }
 
-        private void createDefaultLoader() {
+        private void createDefaultLoader() throws Exception {
             if (!mLoaders.containsKey(RequestOptions.DEFAULT_LOADER)) {
 
                 final BitmapLruCache bitmapLruCache = new BitmapLruCache();
