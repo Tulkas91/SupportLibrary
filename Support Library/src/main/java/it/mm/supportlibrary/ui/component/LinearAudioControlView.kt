@@ -3,7 +3,6 @@ package it.mm.supportlibrary.ui.component
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.LinearLayout
 import androidx.core.view.isEmpty
 import androidx.lifecycle.LifecycleOwner
@@ -43,7 +42,7 @@ class LinearAudioControlView @JvmOverloads constructor(
         audioListPath = ArrayList<String>()
         binding.newAudio.setIconResource(R.drawable.add)
         binding.newAudio.setOnClickListener {
-            binding.tvMessage.visibility = View.GONE
+            binding.tvMessage.visibility = GONE
             count += 1
             val audioControlView = AudioControlView(context).apply {
                 filePath = "$parentFilePath/audio_$count"
@@ -51,7 +50,7 @@ class LinearAudioControlView @JvmOverloads constructor(
                 buttonDelete.setOnClickListener {
                     binding.audioList.removeView(this)
                     if (isAudioSaved.value!!) Utilities.deleteFile(filePath)
-                    if (binding.audioList.isEmpty()) binding.tvMessage.visibility = View.VISIBLE
+                    if (binding.audioList.isEmpty()) binding.tvMessage.visibility = VISIBLE
                 }
                 isAudioSaved.observe(lifecycleOwner!!) {
                     if (it) {

@@ -59,6 +59,14 @@
 
     <style name="Material3.AppBarOverlay" parent="Theme.Material3.Light" />
 
+    <style name="LoadingDialog" parent="Theme.Material3.Light.Dialog">
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColorPrimary">@color/md_white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <style name="ExtendedFab" parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="iconTint">@color/white</item>

@@ -20,6 +20,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.hardware.usb.UsbDevice;
 import android.os.Build;
+import android.os.Handler;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Spanned;
@@ -60,8 +61,6 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.Map;
 
-import it.mm.supportlibrary.Application;
-
 public class AndroidUtilities {
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<String, Typeface>();
     private static Boolean isTablet = null;
@@ -74,45 +73,42 @@ public class AndroidUtilities {
 //        density = getActivity().getResources().getDisplayMetrics().density;
 //    }
 
-    public static void runOnUIThread(Runnable runnable) {
-        runOnUIThread(runnable, 0);
+    public static void runOnUIThread(Handler applicationHandler, Runnable runnable) {
+        runOnUIThread(applicationHandler, runnable, 0);
     }
 
-    public static void runOnUIThread(Runnable runnable, long delay) {
+    public static void runOnUIThread(Handler applicationHandler, Runnable runnable, long delay) {
         if (delay == 0) {
-            Application.Companion.getApplicationHandler().post(runnable);
+            applicationHandler.post(runnable);
         } else {
-            Application.Companion.getApplicationHandler().postDelayed(runnable, delay);
+            applicationHandler.postDelayed(runnable, delay);
         }
     }
 
     private String changeCharacterSet = ".";
 
-    private InputFilter filterPointToComma = new InputFilter() {
-        @Override
-        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-            if (dest.length() == 0 && (source.toString().equals(",") || source.toString().equals("."))) {
-                return "";
-            }
-
-            if (StringUtils.countMatches(dest, ",") == 1 && source.toString().equals(",")) {
-                return "";
-            }
-
-            if (source != null && !source.toString().equals("") && changeCharacterSet.contains((source.toString()))) {
-                return StringUtils.countMatches(dest, ",") < 1 ? "," : "";
-            }
-
-            return null;
+    private InputFilter filterPointToComma = (source, start, end, dest, dstart, dend) -> {
+        if (dest.toString().isEmpty() && (source.toString().equals(",") || source.toString().equals("."))) {
+            return "";
         }
+
+        if (StringUtils.countMatches(dest, ",") == 1 && source.toString().equals(",")) {
+            return "";
+        }
+
+        if (source != null && !source.toString().equals("") && changeCharacterSet.contains((source.toString()))) {
+            return StringUtils.countMatches(dest, ",") < 1 ? "," : "";
+        }
+
+        return null;
     };
 
-    public static void cancelRunOnUIThread(Runnable runnable) {
-        Application.Companion.getApplicationHandler().removeCallbacks(runnable);
+    public static void cancelRunOnUIThread(Handler applicationHandler, Runnable runnable) {
+        applicationHandler.removeCallbacks(runnable);
     }
 
     public static void clearCursorDrawable(EditText editText) {
-        if (editText == null || Build.VERSION.SDK_INT < 12) {
+        if (editText == null) {
             return;
         }
         try {
@@ -195,7 +191,7 @@ public class AndroidUtilities {
                     Typeface t = Typeface.createFromAsset(context.getAssets(), assetPath);
                     typefaceCache.put(assetPath, t);
                 } catch (Exception e) {
-                    FileLog.e("Typefaces", "Could not get typeface '" + assetPath + "' because " + e.getMessage());
+                    FileLog.e("Could not get typeface '" + assetPath + "' because " + e.getMessage());
                     return null;
                 }
             }
@@ -204,24 +200,22 @@ public class AndroidUtilities {
     }
 
     public static void setListViewEdgeEffectColor(AbsListView listView, int color) {
-        if (Build.VERSION.SDK_INT >= 21) {
-            try {
-                Field field = AbsListView.class.getDeclaredField("mEdgeGlowTop");
-                field.setAccessible(true);
-                EdgeEffect mEdgeGlowTop = (EdgeEffect) field.get(listView);
-                if (mEdgeGlowTop != null) {
-                    mEdgeGlowTop.setColor(color);
-                }
-
-                field = AbsListView.class.getDeclaredField("mEdgeGlowBottom");
-                field.setAccessible(true);
-                EdgeEffect mEdgeGlowBottom = (EdgeEffect) field.get(listView);
-                if (mEdgeGlowBottom != null) {
-                    mEdgeGlowBottom.setColor(color);
-                }
-            } catch (Exception e) {
-                FileLog.e("tmessages", e);
+        try {
+            Field field = AbsListView.class.getDeclaredField("mEdgeGlowTop");
+            field.setAccessible(true);
+            EdgeEffect mEdgeGlowTop = (EdgeEffect) field.get(listView);
+            if (mEdgeGlowTop != null) {
+                mEdgeGlowTop.setColor(color);
             }
+
+            field = AbsListView.class.getDeclaredField("mEdgeGlowBottom");
+            field.setAccessible(true);
+            EdgeEffect mEdgeGlowBottom = (EdgeEffect) field.get(listView);
+            if (mEdgeGlowBottom != null) {
+                mEdgeGlowBottom.setColor(color);
+            }
+        } catch (Exception e) {
+            FileLog.e("tmessages", e);
         }
     }
 

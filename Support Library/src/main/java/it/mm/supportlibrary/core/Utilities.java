@@ -15,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,20 @@ import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.lifecycle.MutableLiveData;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +49,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
@@ -62,12 +78,12 @@ public class Utilities {
 
     public static volatile DispatchQueue globalQueue = new DispatchQueue("globalQueue");
     public static volatile DispatchQueue importQueue = new DispatchQueue("importQueue");
-    private static HashMap<Integer, File> uploadsFiles = new HashMap<Integer, File>();
-    private static HashMap<Integer, String> uploadsKeys = new HashMap<Integer, String>();
-    private static HashMap<Integer, String> uploadsBelfiori = new HashMap<Integer, String>();
-    private static HashMap<Integer, String> uploadsHosts = new HashMap<Integer, String>();
+    private static HashMap<Integer, File> uploadsFiles = new HashMap<>();
+    private static HashMap<Integer, String> uploadsKeys = new HashMap<>();
+    private static HashMap<Integer, String> uploadsBelfiori = new HashMap<>();
+    private static HashMap<Integer, String> uploadsHosts = new HashMap<>();
 
-    public static void downloadFileUpdate(Context context, String url, String fileName, boolean installAPK, String authority) {
+    public static void downloadFileUpdate(Handler mApplicationHandler, Context context, String url, String fileName, boolean installAPK, String authority) {
         // Usa ProgressBar o altri metodi più moderni se preferito, ma manteniamo ProgressDialog per semplicità
         final ProgressDialog progressBarDialog = new ProgressDialog(context);
         progressBarDialog.setCancelable(false);
@@ -79,69 +95,66 @@ public class Utilities {
         // Gestisci il download in un ExecutorService o HandlerThread, migliore gestione dei thread
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-        executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                DownloadManager.Request dmr = new DownloadManager.Request(Uri.parse(url));
-                dmr.setTitle(fileName);
-                dmr.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
-                dmr.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
-                dmr.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
+        executorService.submit(() -> {
+            DownloadManager.Request dmr = new DownloadManager.Request(Uri.parse(url));
+            dmr.setTitle(fileName);
+            dmr.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+            dmr.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION);
+            dmr.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
 
-                DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                long downloadManagerId = manager.enqueue(dmr);
+            DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+            long downloadManagerId = manager.enqueue(dmr);
 
-                boolean downloading = true;
-                while (downloading) {
-                    DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(downloadManagerId);
-                    Cursor cursor = null;
-                    try {
-                        cursor = manager.query(query);
-                        if (cursor != null && cursor.moveToFirst()) {
-                            int statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                            int bytesDownloadedColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
-                            int bytesTotalColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
+            boolean downloading = true;
+            while (downloading) {
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(downloadManagerId);
+                Cursor cursor = null;
+                try {
+                    cursor = manager.query(query);
+                    if (cursor != null && cursor.moveToFirst()) {
+                        int statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        int bytesDownloadedColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+                        int bytesTotalColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
 
-                            // Verifica che gli indici delle colonne siano validi prima di accedere ai dati
-                            if (statusColumnIndex != -1 && bytesDownloadedColumnIndex != -1 && bytesTotalColumnIndex != -1) {
-                                int status = cursor.getInt(statusColumnIndex);
-                                int bytesDownloaded = cursor.getInt(bytesDownloadedColumnIndex);
-                                int bytesTotal = cursor.getInt(bytesTotalColumnIndex);
+                        // Verifica che gli indici delle colonne siano validi prima di accedere ai dati
+                        if (statusColumnIndex != -1 && bytesDownloadedColumnIndex != -1 && bytesTotalColumnIndex != -1) {
+                            int status = cursor.getInt(statusColumnIndex);
+                            int bytesDownloaded = cursor.getInt(bytesDownloadedColumnIndex);
+                            int bytesTotal = cursor.getInt(bytesTotalColumnIndex);
 
-                                if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                                    downloading = false;
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                downloading = false;
 
-                                    AndroidUtilities.runOnUIThread(() -> {
-                                        progressBarDialog.dismiss();
-                                        if (installAPK) {
-                                            startInstallApk(context, authority, fileName);
-                                        }
-                                    });
-                                }
-
-                                if (bytesTotal > 0) {
-                                    final int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
-                                    AndroidUtilities.runOnUIThread(() -> progressBarDialog.setProgress(progress));
-                                }
-                            } else {
-                                // Gestisci il caso in cui una o più colonne non siano presenti
-                                Toast.makeText(context, "Una delle colonne non è presente nel Cursor.", Toast.LENGTH_LONG).show();
+                                AndroidUtilities.runOnUIThread(mApplicationHandler, () -> {
+                                    progressBarDialog.dismiss();
+                                    if (installAPK) {
+                                        startInstallApk(context, authority, fileName);
+                                    }
+                                });
                             }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        if (cursor != null) {
-                            cursor.close(); // Assicurati di chiudere il cursor
-                        }
-                    }
 
-                    try {
-                        Thread.sleep(500); // Piccola pausa per evitare il polling continuo
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                            if (bytesTotal > 0) {
+                                final int progress = (int) ((bytesDownloaded * 100L) / bytesTotal);
+                                AndroidUtilities.runOnUIThread(mApplicationHandler, () -> progressBarDialog.setProgress(progress));
+                            }
+                        } else {
+                            // Gestisci il caso in cui una o più colonne non siano presenti
+                            Toast.makeText(context, "Una delle colonne non è presente nel Cursor.", Toast.LENGTH_LONG).show();
+                        }
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (cursor != null) {
+                        cursor.close(); // Assicurati di chiudere il cursor
+                    }
+                }
+
+                try {
+                    Thread.sleep(500); // Piccola pausa per evitare il polling continuo
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -283,17 +296,6 @@ public class Utilities {
     }
 
     public static boolean isOnline() {
-//        if (KTaripApplication.getInstance().getPrefser().getPreferences().getBoolean("prefIntervalOnline", false)) {
-//            Date date = new Date();
-//            Calendar calendar = GregorianCalendar.getInstance();
-//            calendar.setTime(date);
-//            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-//
-//            if (!(hour == 13 || hour == 14 || hour >= 18)) {
-//                return false;
-//            }
-//        }
-
         Runtime runtime = Runtime.getRuntime();
         try {
 
