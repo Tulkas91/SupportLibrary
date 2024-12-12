@@ -41,6 +41,7 @@ public class GoogleApiGPS {
     public GoogleApiGPS(Context ctx) {
         context = ctx;
 //        activity = act;
+        mutableLocation = new MutableLiveData<>();
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         locationCallback = new LocationCallback() {
             @Override
