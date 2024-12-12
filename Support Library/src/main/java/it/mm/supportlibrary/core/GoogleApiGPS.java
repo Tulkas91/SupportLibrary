@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -28,6 +29,7 @@ public class GoogleApiGPS {
 //    private Activity activity;
     private Context context;
     private Location finalLocation;
+    MutableLiveData<Location> mutableLocation;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final long UPDATE_INTERVAL = 1000, FASTEST_INTERVAL = 500;
     private float accuracy = 1000;
@@ -54,8 +56,7 @@ public class GoogleApiGPS {
                 for (Location location : locationResult.getLocations()) {
                     if (location.getAccuracy() < accuracy) {
                         accuracy = location.getAccuracy();
-                        finalLocation = location;
-                        NotificationCenter.getInstance().postNotificationName(NotificationCenter.updateLocation);
+                        mutableLocation.setValue(location);
                     }
                 }
             }
@@ -121,12 +122,9 @@ public class GoogleApiGPS {
 //        }
 
         try {
-            fusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        finalLocation = location;
-                    }
+            fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                if (location != null) {
+                    finalLocation = location;
                 }
             });
         } catch (SecurityException e) {

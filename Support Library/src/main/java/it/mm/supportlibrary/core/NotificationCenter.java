@@ -30,7 +30,6 @@ public class NotificationCenter {
     public static final int enableButtonManagerClock = totalEvents++;
     public static final int setBeaconOffice = totalEvents++;
     public static final int actionSelected = totalEvents++;
-    public static final int updateLocation = totalEvents++;
 
     final private HashMap<Integer, ArrayList<Object>> observers = new HashMap<Integer, ArrayList<Object>>();
 
