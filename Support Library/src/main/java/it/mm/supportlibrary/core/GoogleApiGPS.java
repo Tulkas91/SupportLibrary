@@ -1,25 +1,20 @@
 package it.mm.supportlibrary.core;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Looper;
 import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.MutableLiveData;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -29,7 +24,7 @@ public class GoogleApiGPS {
 //    private Activity activity;
     private Context context;
     private Location finalLocation;
-    MutableLiveData<Location> mutableLocation;
+    public MutableLiveData<Location> mutableLocation;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final long UPDATE_INTERVAL = 1000, FASTEST_INTERVAL = 500;
     private float accuracy = 1000;
