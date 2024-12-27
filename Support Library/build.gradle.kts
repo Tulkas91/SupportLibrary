@@ -110,7 +110,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.4.4" // Versione della libreria
+            version = "1.4.5" // Versione della libreria
         }
     }
 
