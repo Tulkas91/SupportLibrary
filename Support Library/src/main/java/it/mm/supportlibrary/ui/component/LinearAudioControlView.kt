@@ -45,7 +45,7 @@ class LinearAudioControlView @JvmOverloads constructor(
             binding.tvMessage.visibility = GONE
             count += 1
             val audioControlView = AudioControlView(context).apply {
-                filePath = "$parentFilePath/audio_$count"
+                filePath = "$parentFilePath/audio_$count.3gp"
                 setLifecycleOwner(lifecycleOwner!!)
                 buttonDelete.setOnClickListener {
                     binding.audioList.removeView(this)
