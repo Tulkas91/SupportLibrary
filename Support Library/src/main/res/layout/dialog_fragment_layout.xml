@@ -123,9 +123,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
-    <it.mm.supportlibrary.ui.component.photo.LinearPhotoControlView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
 </LinearLayout>
