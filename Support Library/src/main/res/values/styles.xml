@@ -72,7 +72,23 @@
         <item name="iconTint">@color/white</item>
         <item name="android:textColor">@color/white</item>
     </style>
+
+    <style name="AlertDialog" parent="Theme.Material3.Light.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/AlertAnimation</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:backgroundDimAmount">0.0</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
     <!--    Material3 fine-->
+
+    <style name="AlertAnimation">
+        <item name="android:windowEnterAnimation">@anim/alert_present</item>
+        <item name="android:windowExitAnimation">@anim/alert_dismiss</item>
+    </style>
 
     <style name="Toolbar">
 

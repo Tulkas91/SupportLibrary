@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import it.mm.supportlibrary.R
 import it.mm.supportlibrary.databinding.DialogFragmentLayoutBinding
 
 class MaterialDialogFragment : DialogFragment() {
@@ -15,7 +16,7 @@ class MaterialDialogFragment : DialogFragment() {
     lateinit var title: String
     lateinit var message: String
     var buttonNeutralVisibility = View.VISIBLE
-    var buttonNegativeVisibility = View.INVISIBLE
+    var buttonNegativeVisibility = View.GONE
     var buttonPositiveTitle = "CONFERMA"
     var buttonNegativeTitle = "RIPROVA"
     var buttonPositiveClickListener: View.OnClickListener? = null
@@ -25,6 +26,7 @@ class MaterialDialogFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         // Imposta la dialog come non cancellabile
         isCancelable = false
+        setStyle(STYLE_NORMAL, R.style.AlertDialog)
     }
 
     override fun onCreateView(
@@ -73,6 +75,20 @@ class MaterialDialogFragment : DialogFragment() {
             binding.buttonPositive.setOnClickListener {
                 dismiss()
             }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        dialog?.window?.let { window ->
+            // Imposta la larghezza al 100% dello schermo
+            val params = window.attributes
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            window.attributes = params
+
+            // Imposta uno stile senza margini, opzionale
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 }
