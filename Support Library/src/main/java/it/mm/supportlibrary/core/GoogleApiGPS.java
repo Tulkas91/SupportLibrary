@@ -50,10 +50,10 @@ public class GoogleApiGPS {
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
-                    if (location.getAccuracy() < accuracy) {
-                        accuracy = location.getAccuracy();
+//                    if (location.getAccuracy() < accuracy) {
+//                        accuracy = location.getAccuracy();
                         mutableLocation.setValue(location);
-                    }
+//                    }
                 }
             }
         };
