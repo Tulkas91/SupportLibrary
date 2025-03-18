@@ -232,4 +232,23 @@ public final class ImageUtilities {
             return null;
         }
     }
+
+    private Bitmap scaleBitmapToFit(Bitmap source, int maxWidth, int maxHeight) {
+        int width = source.getWidth();
+        int height = source.getHeight();
+
+        // Se non è necessario ridimensionare, ritorna direttamente l'originale
+        if (width <= maxWidth && height <= maxHeight) {
+            return source;
+        }
+
+        float ratioWidth = (float) maxWidth / width;
+        float ratioHeight = (float) maxHeight / height;
+        float ratio = Math.min(ratioWidth, ratioHeight);
+
+        int newWidth = Math.round(width * ratio);
+        int newHeight = Math.round(height * ratio);
+
+        return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
+    }
 }
