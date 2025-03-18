@@ -38,8 +38,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildFeatures {
@@ -48,7 +48,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "21"
     }
 }
 
@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.rxjava)
     implementation(libs.review.ktx)
     implementation(libs.core.ktx)
+    implementation(libs.androidx.exifinterface)
 
     // Test
     testImplementation(libs.junit)
@@ -110,7 +111,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.4.12" // Versione della libreria
+            version = "1.4.13" // Versione della libreria
         }
     }
 
