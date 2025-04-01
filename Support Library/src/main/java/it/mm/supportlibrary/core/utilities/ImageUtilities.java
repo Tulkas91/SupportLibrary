@@ -12,8 +12,10 @@ import android.util.Log;
 
 import androidx.exifinterface.media.ExifInterface;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -233,7 +235,11 @@ public final class ImageUtilities {
         }
     }
 
-    private Bitmap scaleBitmapToFit(Bitmap source, int maxWidth, int maxHeight) {
+    /**
+     * Esempio di metodo per ridimensionare il bitmap rispettando il rapporto.
+     * Se l'immagine è più piccola della size target, la restituisce invariata.
+     */
+    public Bitmap scaleBitmapToFit(Bitmap source, int maxWidth, int maxHeight) {
         int width = source.getWidth();
         int height = source.getHeight();
 
@@ -250,5 +256,16 @@ public final class ImageUtilities {
         int newHeight = Math.round(height * ratio);
 
         return Bitmap.createScaledBitmap(source, newWidth, newHeight, true);
+    }
+
+    private File createImageFile(File storageDir) throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        return File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
     }
 }

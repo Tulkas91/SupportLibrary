@@ -65,7 +65,8 @@ dependencies {
     api(libs.material)
     api(libs.prefser)
     api(libs.progressview)
-    implementation(libs.play.services.location)
+    api(libs.play.services.location)
+    api(libs.play.services.maps)
     implementation(libs.support.annotations)
     implementation(libs.commons.lang3)
     api(libs.retrofit)
@@ -111,7 +112,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.4.13" // Versione della libreria
+            version = "1.4.15" // Versione della libreria
         }
     }
 
