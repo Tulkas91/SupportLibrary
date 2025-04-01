@@ -67,6 +67,7 @@ dependencies {
     api(libs.progressview)
     api(libs.play.services.location)
     api(libs.play.services.maps)
+    api(libs.android.maps.utils)
     implementation(libs.support.annotations)
     implementation(libs.commons.lang3)
     api(libs.retrofit)
@@ -112,7 +113,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.4.15" // Versione della libreria
+            version = "1.4.16" // Versione della libreria
         }
     }
 

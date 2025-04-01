@@ -25,8 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import it.sikuel.ktarip.core.maps.model.MyItem;
-import it.sikuel.ktarip.model.TaskMarker;
+import it.mm.supportlibrary.core.maps.model.MyItem;
 
 public class MyItemReader {
 
@@ -58,16 +57,8 @@ public class MyItemReader {
         return items;
     }
 
-    public List<MyItem> read(List<TaskMarker> array, String title) throws JSONException {
-        List<MyItem> items = new ArrayList<MyItem>();
-        for (TaskMarker marker : array) {
-            String snippet = null;
-            double lat = marker.latitude;
-            double lng = marker.longitude;
-            snippet = marker.address;
-            items.add(new MyItem(lat, lng, title, snippet));
-        }
-        return items;
+    public MyItem readItem(double lat, double lng, String title, String snippet) {
+        return new MyItem(lat, lng, title, snippet);
     }
 
 }
