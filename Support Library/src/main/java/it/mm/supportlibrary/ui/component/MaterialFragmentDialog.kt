@@ -26,7 +26,7 @@ class MaterialDialogFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         // Imposta la dialog come non cancellabile
         isCancelable = false
-        setStyle(STYLE_NORMAL, R.style.AlertDialog)
+        setStyle(STYLE_NORMAL, com.google.android.material.R.style.MaterialAlertDialog_Material3)
     }
 
     override fun onCreateView(
@@ -88,7 +88,7 @@ class MaterialDialogFragment : DialogFragment() {
             window.attributes = params
 
             // Imposta uno stile senza margini, opzionale
-            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         }
     }
 }

@@ -3,6 +3,7 @@ package it.mm.supportlibrary.ui.component
 import android.content.Context
 import android.media.MediaPlayer
 import android.media.MediaRecorder
+import android.os.Build
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
@@ -146,9 +147,12 @@ class AudioControlView @JvmOverloads constructor(
 
     @Throws(IOException::class)
     private fun startRecording() {
-        mediaRecorder = MediaRecorder()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+            mediaRecorder = MediaRecorder(context)
+        else
+            mediaRecorder = MediaRecorder()
         mediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder!!.setOutputFile(filePath)
         mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
         mediaRecorder!!.prepare()

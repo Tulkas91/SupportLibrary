@@ -69,11 +69,17 @@
                     android:textSize="18sp" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/audio_list"
+            <HorizontalScrollView
+                android:id="@+id/horizontal_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/audio_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
 
             <TextView
                 android:id="@+id/tv_message"
@@ -84,7 +90,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_marginBottom="17dp"
                 android:text="Clicca nuovo per registrare"
-                android:textAlignment="center"/>
+                android:textAlignment="center" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
