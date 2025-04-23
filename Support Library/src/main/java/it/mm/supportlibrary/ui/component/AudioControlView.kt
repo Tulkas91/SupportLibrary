@@ -154,7 +154,7 @@ class AudioControlView @JvmOverloads constructor(
         mediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder!!.setOutputFile(filePath)
-        mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         mediaRecorder!!.prepare()
         mediaRecorder!!.start()
     }

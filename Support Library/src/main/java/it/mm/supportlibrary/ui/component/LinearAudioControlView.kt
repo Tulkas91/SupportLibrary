@@ -8,8 +8,10 @@ import androidx.core.view.isEmpty
 import androidx.lifecycle.LifecycleOwner
 import it.mm.supportlibrary.R
 import it.mm.supportlibrary.core.Utilities
+import it.mm.supportlibrary.core.time.FastDateFormat
 import it.mm.supportlibrary.databinding.LinearAudioControlBinding
-import java.util.ArrayList
+import java.util.Date
+import java.util.Locale
 
 class LinearAudioControlView @JvmOverloads constructor(
     context: Context,
@@ -45,7 +47,11 @@ class LinearAudioControlView @JvmOverloads constructor(
             binding.tvMessage.visibility = GONE
             count += 1
             val audioControlView = AudioControlView(context).apply {
-                filePath = "$parentFilePath/audio_$count.3gp"
+                val dateText = FastDateFormat.getInstance(
+                    "yyyyMMdd_HHmmss",
+                    Locale.ITALY
+                ).format(Date())
+                filePath = "$parentFilePath/${dateText}_audio_$count.m4a"
                 setLifecycleOwner(lifecycleOwner!!)
                 buttonDelete.setOnClickListener {
                     binding.audioList.removeView(this)
