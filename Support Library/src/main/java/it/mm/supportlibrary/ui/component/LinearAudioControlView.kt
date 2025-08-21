@@ -41,7 +41,7 @@ class LinearAudioControlView @JvmOverloads constructor(
 
     private fun initializeViews() {
         count = 0
-        audioListPath = ArrayList<String>()
+        audioListPath = ArrayList()
         binding.newAudio.setIconResource(R.drawable.add)
         binding.newAudio.setOnClickListener {
             binding.tvMessage.visibility = GONE

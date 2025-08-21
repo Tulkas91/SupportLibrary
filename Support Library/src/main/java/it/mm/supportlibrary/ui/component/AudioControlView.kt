@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import com.google.android.material.button.MaterialButton
 import it.mm.supportlibrary.R
 import java.io.IOException
+import java.util.Locale
 
 class AudioControlView @JvmOverloads constructor(
     context: Context,
@@ -240,8 +241,8 @@ class AudioControlView @JvmOverloads constructor(
         val minutes = (milliseconds / 1000) / 60
         val seconds = (milliseconds / 1000) % 60
 
-        val minutesStr = String.format("%02d", minutes)
-        val secondsStr = String.format("%02d", seconds)
+        val minutesStr = String.format(Locale.getDefault(),"%02d", minutes)
+        val secondsStr = String.format(Locale.getDefault(),"%02d", seconds)
 
         return "$minutesStr:$secondsStr"
     }
