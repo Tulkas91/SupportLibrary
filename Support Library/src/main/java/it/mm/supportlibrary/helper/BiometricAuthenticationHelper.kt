@@ -11,8 +11,7 @@ import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import it.mm.supportlibrary.core.NotificationCenter
+import it.mm.supportlibrary.core.utilities.SingleLiveEvent
 import java.util.concurrent.Executor
 
 class BiometricAuthenticationHelper(val context: Context) {
@@ -24,7 +23,7 @@ class BiometricAuthenticationHelper(val context: Context) {
 
         // LiveData per l'autenticazione
         @JvmStatic
-        private val _authenticationResult = MutableLiveData<Boolean>()
+        private val _authenticationResult = SingleLiveEvent<Boolean>()
         @JvmStatic
         val authenticationResult: LiveData<Boolean> get() = _authenticationResult
 
@@ -37,17 +36,17 @@ class BiometricAuthenticationHelper(val context: Context) {
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                         super.onAuthenticationError(errorCode, errString)
-                        _authenticationResult.postValue(false)
+                        _authenticationResult.emit(false)
                     }
 
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        _authenticationResult.postValue(true)
+                        _authenticationResult.emit(true)
                     }
 
                     override fun onAuthenticationFailed() {
                         super.onAuthenticationFailed()
-                        _authenticationResult.postValue(false)
+                        _authenticationResult.emit(false)
                     }
                 })
         }
