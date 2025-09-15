@@ -23,17 +23,27 @@ public class MyItem implements ClusterItem {
     private final LatLng mPosition;
     private String mTitle;
     private String mSnippet;
+    private final float zIndex;
 
     public MyItem(double lat, double lng) {
         mPosition = new LatLng(lat, lng);
         mTitle = null;
         mSnippet = null;
+        zIndex = 0f;
     }
 
     public MyItem(double lat, double lng, String title, String snippet) {
         mPosition = new LatLng(lat, lng);
         mTitle = title;
         mSnippet = snippet;
+        zIndex = 0f;
+    }
+
+    public MyItem(double lat, double lng, String title, String snippet, float z_index) {
+        mPosition = new LatLng(lat, lng);
+        mTitle = title;
+        mSnippet = snippet;
+        zIndex = z_index;
     }
 
     @Override
@@ -47,6 +57,7 @@ public class MyItem implements ClusterItem {
     @Override
     public String getSnippet() { return mSnippet; }
 
+    @Override public Float getZIndex() { return zIndex; }
     /**
      * Set the title of the marker
      * @param title string to be set as title
