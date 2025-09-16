@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,6 +36,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.mikepenz.iconics.IconicsDrawable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -170,6 +172,15 @@ public class Utilities {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
         ContextCompat.startActivity(context, intent, null);
+    }
+
+    public static IconicsDrawable setAndGetIconicsDrawable(Context context, String iconName, int color, int size, int padding) {
+        IconicsDrawable icon = new IconicsDrawable(context, iconName);
+        icon.setColorList(ColorStateList.valueOf(ContextCompat.getColor(context, color)));
+        icon.setSizeXPx(AndroidUtilities.dpToPx(size));
+        icon.setSizeYPx(AndroidUtilities.dpToPx(size));
+        icon.setPaddingPx(AndroidUtilities.dpToPx(padding));
+        return icon;
     }
 
     // Funzione per aprire l'app di supporto remoto

@@ -23,11 +23,13 @@ public class Person implements ClusterItem {
     public final String name;
     public final int profilePhoto;
     private final LatLng mPosition;
+    private final Float zIndex;
 
     public Person(LatLng position, String name, int pictureResource) {
         this.name = name;
         profilePhoto = pictureResource;
         mPosition = position;
+        zIndex = 0f;
     }
 
     @Override
@@ -43,5 +45,10 @@ public class Person implements ClusterItem {
     @Override
     public String getSnippet() {
         return null;
+    }
+
+    @Override
+    public Float getZIndex() {
+        return zIndex;
     }
 }

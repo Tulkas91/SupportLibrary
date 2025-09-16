@@ -73,6 +73,9 @@ dependencies {
     api(libs.retrofit)
     api(libs.converter.gson)
     api(libs.simplesearchview)
+    api(libs.iconics.typeface.api)
+    api(libs.iconics.core)
+    api(libs.google.material.typeface)
 
     implementation(libs.okhttp)
     implementation(libs.okhttp.urlconnection) // Supporto per HttpURLConnection
@@ -113,7 +116,7 @@ publishing {
 
             groupId = "com.github.Tulkas91" // ID del gruppo, usa il tuo username GitHub
             artifactId = "SupportLibrary" // Nome della libreria/repository su GitHub
-            version = "1.4.25" // Versione della libreria
+            version = "1.5.0" // Versione della libreria
         }
     }
 

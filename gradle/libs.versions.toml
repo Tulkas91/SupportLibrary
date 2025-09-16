@@ -3,6 +3,8 @@ agp = "8.13.0"
 androidMapsUtils = "3.17.0"
 assertjCore = "3.27.4"
 commonsLang3 = "3.18.0"
+googleMaterialTypeface = "4.0.0.3-kotlin"
+iconicsTypefaceApi = "5.4.0"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -37,6 +39,9 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertjCore" }
 commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "commonsLang3" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+google-material-typeface = { module = "com.mikepenz:google-material-typeface", version.ref = "googleMaterialTypeface" }
+iconics-core = { module = "com.mikepenz:iconics-core", version.ref = "iconicsTypefaceApi" }
+iconics-typeface-api = { module = "com.mikepenz:iconics-typeface-api", version.ref = "iconicsTypefaceApi" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-volley = { group = "com.android.volley", name = "volley", version.ref = "androidvolley" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
