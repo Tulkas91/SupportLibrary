@@ -83,7 +83,7 @@ public class ModelAdapter<ModelClass> {
 
     public void loadFromCursor(@NonNull ModelClass model, @NonNull Cursor cursor) {
         List<String> columnsOrdered = new ArrayList<>(Arrays.asList(cursor.getColumnNames()));
-        long modelId = cursor.getLong(cursor.getColumnIndex(tableInfo.getPrimaryKeyColumnName()));
+        long modelId = cursor.getLong(cursor.getColumnIndexOrThrow(tableInfo.getPrimaryKeyColumnName()));
         for (Field field : tableInfo.getFields()) {
             field.setAccessible(true);
             Class<?> fieldType = field.getType();
