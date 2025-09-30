@@ -131,7 +131,7 @@ class BeaconHelper(val context: Context) {
 
     private fun setUpForegroundService() {
         val builder = Notification.Builder(context, "K-HelpApp")
-        builder.setSmallIcon(R.mipmap.ic_launcher_round)
+        builder.setSmallIcon(R.drawable.notifications)
         builder.setContentTitle("K-Help Application")
         builder.setContentText("Scanning for Beacons")
 //        val intent = Intent(context, MainActivity::class.java)
@@ -201,7 +201,7 @@ class BeaconHelper(val context: Context) {
             .setChannelId(channelId)
             .setChannelName("K-Help Notification Channel")
             .setSmallIcon(R.drawable.notifications)
-            .setLargeIcon(R.mipmap.ic_launcher_round)
+            .setLargeIcon(R.drawable.notifications)
             .setColor(R.color.colorPrimary)
 //            .setPendingIntent(resultPendingIntent)
             .show()
