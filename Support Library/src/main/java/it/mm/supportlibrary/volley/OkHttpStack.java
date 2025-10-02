@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -21,74 +22,76 @@ import okhttp3.Response;
 
 public class OkHttpStack extends BaseHttpStack {
 
-    private final OkHttpClient client;
+    private final OkHttpClient baseClient;
 
     public OkHttpStack(OkHttpClient client) {
-        this.client = client;
+        this.baseClient = client;
     }
 
     @Override
-    public HttpResponse executeRequest(Request<?> request, Map<String, String> additionalHeaders) throws IOException, AuthFailureError {
-        // Crea la richiesta OkHttp
-        okhttp3.Request.Builder okHttpRequestBuilder = new okhttp3.Request.Builder();
-        okHttpRequestBuilder.url(request.getUrl());
+    public HttpResponse executeRequest(Request<?> request, Map<String, String> additionalHeaders)
+            throws IOException, AuthFailureError {
 
-        // Aggiungi gli header personalizzati
+        // 1) Timeout per-request da Volley (fallback 10s se 0 o negativo)
+        int timeoutMs = request.getTimeoutMs();
+        if (timeoutMs <= 0) timeoutMs = 10_000;
+
+        // 2) Clona il client con i timeout della request
+        OkHttpClient clientForThisCall = baseClient.newBuilder()
+                .connectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+                .readTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+                .writeTimeout(timeoutMs, TimeUnit.MILLISECONDS)
+                .callTimeout(timeoutMs, TimeUnit.MILLISECONDS) // opzionale ma consigliato
+                .build();
+
+        // 3) Costruisci la richiesta OkHttp
+        okhttp3.Request.Builder okHttpRequestBuilder = new okhttp3.Request.Builder()
+                .url(request.getUrl());
+
+        // Headers: request + additional (gestisci null)
         Map<String, String> headers = new HashMap<>();
-        headers.putAll(request.getHeaders()); // Headers della richiesta Volley
-        headers.putAll(additionalHeaders); // Headers aggiuntivi
+        Map<String, String> reqHeaders = request.getHeaders();
+        if (reqHeaders != null) headers.putAll(reqHeaders);
+        if (additionalHeaders != null) headers.putAll(additionalHeaders);
 
         for (Map.Entry<String, String> header : headers.entrySet()) {
             okHttpRequestBuilder.addHeader(header.getKey(), header.getValue());
         }
 
-        // Imposta il metodo HTTP (GET, POST, PUT, DELETE, ecc.)
+        // Metodo + body
         setMethod(request, okHttpRequestBuilder);
 
-        // Esegui la richiesta con OkHttp
-        Response okHttpResponse = client.newCall(okHttpRequestBuilder.build()).execute();
+        // 4) Esegui la call con il client “clonato”
+        Response okHttpResponse = clientForThisCall.newCall(okHttpRequestBuilder.build()).execute();
 
-        // Estrai il codice di risposta e gli headers
+        // 5) Converte in HttpResponse di Volley
         int responseCode = okHttpResponse.code();
         List<Header> responseHeaders = convertHeaders(okHttpResponse.headers().toMultimap());
 
-        // Gestisci il corpo della risposta in modo sicuro
-        InputStream responseStream;
         byte[] responseBody;
-        if (okHttpResponse.body() != null) {
-            responseStream = okHttpResponse.body().byteStream();
+        try (InputStream responseStream = okHttpResponse.body().byteStream()) {
             responseBody = convertInputStreamToByteArray(responseStream);
-            // Crea e restituisci la HttpResponse per Volley
-            HttpResponse httpResponse = new HttpResponse(responseCode, responseHeaders, responseBody);
-            // Assicurati di chiudere il corpo della risposta dopo l'uso per evitare perdite di risorse
-            okHttpResponse.body().close();
-            return httpResponse;
-        } else {
-            // Se il corpo della risposta è nullo, crea un array di byte vuoto
-            responseBody = new byte[0]; // oppure puoi lasciare `null` se preferisci
-            // Crea e restituisci la HttpResponse per Volley
-            return new HttpResponse(responseCode, responseHeaders, responseBody);
+        } finally {
+            okHttpResponse.close();
         }
+
+        return new HttpResponse(responseCode, responseHeaders, responseBody);
     }
 
     public static byte[] convertInputStreamToByteArray(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[8192];
         int length;
-
-        // Leggi dal InputStream e scrivi nel ByteArrayOutputStream
         while ((length = inputStream.read(buffer)) != -1) {
             byteArrayOutputStream.write(buffer, 0, length);
         }
-
-        // Converti il ByteArrayOutputStream in un array di byte
         return byteArrayOutputStream.toByteArray();
     }
 
     /**
-     * Imposta il metodo HTTP (GET, POST, PUT, ecc.) e il body della richiesta per POST e PUT.
+     * Imposta il metodo HTTP (GET, POST, PUT, DELETE, PATCH, HEAD) e il body dove necessario.
      */
-    private void setMethod(Request<?> request, okhttp3.Request.Builder builder) throws AuthFailureError, IOException {
+    private void setMethod(Request<?> request, okhttp3.Request.Builder builder) throws AuthFailureError {
         switch (request.getMethod()) {
             case Request.Method.GET:
                 builder.get();
@@ -102,23 +105,28 @@ public class OkHttpStack extends BaseHttpStack {
             case Request.Method.PUT:
                 builder.put(createRequestBody(request));
                 break;
+            case Request.Method.PATCH: // gestisci PATCH
+                builder.patch(createRequestBody(request));
+                break;
             case Request.Method.HEAD:
                 builder.head();
                 break;
             default:
-                throw new IllegalStateException("Metodo HTTP non supportato.");
+                // fallback sicuro
+                builder.get();
+                break;
         }
     }
 
     /**
-     * Crea un RequestBody per POST e PUT.
+     * Crea un RequestBody per POST/PUT/PATCH.
      */
     private RequestBody createRequestBody(Request<?> request) throws AuthFailureError {
         final byte[] body = request.getBody();
-        if (body != null) {
-            return RequestBody.create(body, MediaType.parse(request.getBodyContentType()));
-        }
-        return RequestBody.create(new byte[0], MediaType.parse(request.getBodyContentType()));
+        String ct = request.getBodyContentType();
+        if (ct == null || ct.isEmpty()) ct = "application/octet-stream";
+        MediaType mediaType = MediaType.parse(ct);
+        return RequestBody.create(body != null ? body : new byte[0], mediaType);
     }
 
     /**
