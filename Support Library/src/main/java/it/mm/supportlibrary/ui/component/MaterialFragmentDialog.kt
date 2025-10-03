@@ -43,8 +43,13 @@ class MaterialDialogFragment : DialogFragment() {
 
         // Carica il Fragment nel dialog_container
         if (currentFragment != null) {
+            if (currentFragment!!.isAdded) {
+                childFragmentManager.beginTransaction()
+                    .remove(currentFragment!!)
+                    .commitNow() // importante: sincrono
+            }
             childFragmentManager.beginTransaction()
-                .replace(binding.dialogContainer.id, currentFragment!!)
+                .replace(binding.dialogContainer.id, currentFragment!!, "material_dialog_content")
                 .commit()
         } else {
             binding.line3.visibility = View.GONE
