@@ -135,7 +135,7 @@ public class RequestQueueFactory {
         clientBuilder.addInterceptor(loggingInterceptor);
 
         // Configura protocolli compatibili
-        clientBuilder.protocols(java.util.Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2));
+        clientBuilder.protocols(java.util.Arrays.asList(Protocol.HTTP_1_1, Protocol.HTTP_2, Protocol.HTTP_3));
 
         OkHttpClient okHttpClient = clientBuilder.build();
 
