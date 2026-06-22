@@ -65,7 +65,9 @@ class InternalPhotoFragment : Fragment() {
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val imageFileName = "JPEG_${timeStamp}_"
-        val storageDir: File? = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir = File(requireContext().cacheDir, "Pictures").apply {
+            mkdirs()
+        }
         return File.createTempFile(
             imageFileName,
             ".jpg",
